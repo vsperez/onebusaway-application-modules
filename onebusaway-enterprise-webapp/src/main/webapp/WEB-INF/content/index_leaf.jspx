@@ -36,7 +36,14 @@
 <s:url var="url" value="/css/map/wizard.css">
 	<s:param name="v"><s:property value="frontEndVersion" /></s:param>
 </s:url>
+
+<s:url var="url" value="/css/map/leaflet.css">
+	<s:param name="v"><s:property value="frontEndVersion" /></s:param>
+</s:url>
+
+
 <link rel="stylesheet" href="${url}" type="text/css" media="screen,print"/>
+
 
 <jsp:text>
 &lt;!--[if IE 6]&gt;
@@ -56,44 +63,9 @@
 	<s:param name="key"><s:property value="googleMapsApiKey" /></s:param>
 	<s:param name="sensor">false</s:param>
 </s:url>
+
+
 <script src="${url}" type="text/javascript"><!-- //prevent jspx minimization --></script>
-
-<s:url var="url" value="/js/oba/obai18n.js">
-	<s:param name="v"><s:property value="frontEndVersion" /></s:param>
-</s:url>
-<script type="text/javascript" src="${url}"><!-- //prevent jspx minimization --></script>
-<!-- LOAD JS PROPERTIES -->
-<script> 
-var keysToLoad = ["js.realtime", "js.schedule", "js.busesenroute","js.stopcode","js.dataUpdated",
-	"js.unitSecond","js.unitSeconds","js.unitMinute","js.unitMinutes","js.unitSufix"
-	];
-dictionary.set('js.realtime',"<s:i18n name='onebusaway-enterprise'><s:text name='js.realtime'/></s:i18n>");
-dictionary.set('js.scheduled',"<s:i18n name='onebusaway-enterprise'><s:text name='js.scheduled'/></s:i18n>");
-dictionary.set('js.busesenroute',"<s:i18n name='onebusaway-enterprise'><s:text name='js.busesenroute'/></s:i18n>");
-dictionary.set('js.stopcode',"<s:i18n name='onebusaway-enterprise'><s:text name='js.stopcode'/></s:i18n>");
-dictionary.set('js.dataUpdated',"<s:i18n name='onebusaway-enterprise'><s:text name='js.dataUpdated'/></s:i18n>");
-dictionary.set('js.unitSecond',"<s:i18n name='onebusaway-enterprise'><s:text name='js.unitSecond'/></s:i18n>");
-dictionary.set('js.unitSeconds',"<s:i18n name='onebusaway-enterprise'><s:text name='js.unitSeconds'/></s:i18n>");
-dictionary.set('js.unitMinute',"<s:i18n name='onebusaway-enterprise'><s:text name='js.unitMinute'/></s:i18n>");
-dictionary.set('js.unitMinutes',"<s:i18n name='onebusaway-enterprise'><s:text name='js.unitMinutes'/></s:i18n>");
-dictionary.set('js.unitSufix',"<s:i18n name='onebusaway-enterprise'><s:text name='js.unitSufix'/></s:i18n>");
-
-//js.noScheduleServiceTodayFor
-dictionary.set('js.noScheduleServiceTodayFor',"<s:i18n name='onebusaway-enterprise'><s:text name='js.noScheduleServiceTodayFor'/></s:i18n>");
-dictionary.set('js.noScheduleServiceFor',"<s:i18n name='onebusaway-enterprise'><s:text name='js.noScheduleServiceFor'/></s:i18n>");
-dictionary.set('js.atThisTime',"<s:i18n name='onebusaway-enterprise'><s:text name='js.atThisTime'/></s:i18n>");
-dictionary.set('js.noScheduleServiceAtThisHour',"<s:i18n name='onebusaway-enterprise'><s:text name='js.noScheduleServiceAtThisHour'/></s:i18n>");
-dictionary.set('js.noBusesEnRouteForThisStop',"<s:i18n name='onebusaway-enterprise'><s:text name='js.noBusesEnRouteForThisStop'/></s:i18n>");
-dictionary.set('js.clickforshcedue',"<s:i18n name='onebusaway-enterprise'><s:text name='js.clickforshcedue'/></s:i18n>");
-dictionary.set('js.viewSchedule',"<s:i18n name='onebusaway-enterprise'><s:text name='js.viewSchedule'/></s:i18n>");
-dictionary.set('js.centerZoom',"<s:i18n name='onebusaway-enterprise'><s:text name='js.centerZoom'/></s:i18n>");
-dictionary.set('js.to',"<s:i18n name='onebusaway-enterprise'><s:text name='js.to'/></s:i18n>");
-
-
-
-
-</script>
-
 
 
 
@@ -137,36 +109,110 @@ dictionary.set('js.to',"<s:i18n name='onebusaway-enterprise'><s:text name='js.to
 </s:url>
 <script type="text/javascript" src="${url}"><!-- //prevent jspx minimization --></script>
 
+
+
+<s:url var="url" value="/js/lib/leaflet.js">
+</s:url>
+<script src="${url}" type="text/javascript"><!-- //prevent jspx minimization --></script>
+
+
 <s:url var="url" value="/js/oba/Util.js">
 	<s:param name="v"><s:property value="frontEndVersion" /></s:param>
 </s:url>
-<script type="text/javascript" src="${url}"><!-- //prevent jspx minimization --></script>
-
+<script type="text/javascript" src="${url}"></script>
+<!-- ESTO ES EL ORIGINAL SE PRUEBA OSM MAS ABAJO
 <s:url var="url" value="/js/oba/map/GoogleMapWrapper.js">
 	<s:param name="v"><s:property value="frontEndVersion" /></s:param>
 </s:url>
-<script type="text/javascript" src="${url}"><!-- //prevent jspx minimization --></script>
+-->
 
+<!-- Google Maps Instance -->
+<!-- 
+<s:if test="mapInstance.equals('google')">
+	<s:url var="url" value="/js/oba/map/GoogleMapWrapper.js">
+		<s:param name="v"><s:property value="frontEndVersion" /></s:param>
+	</s:url>
+	<script type="text/javascript" src="${url}"></script>
+	<s:url var="url" value="/js/oba/map/Popups.js">
+		<s:param name="v"><s:property value="frontEndVersion" /></s:param>
+	</s:url>
+	<script type="text/javascript" src="${url}"></script>
+		<s:url var="url" value="/js/oba/map/RouteMap.js">
+			<s:param name="v"><s:property value="frontEndVersion" /></s:param>
+		</s:url>
+	<script type="text/javascript" src="${url}"></script>
+		<s:url var="url" value="/js/oba/map/Sidebar.js">
+			<s:param name="v"><s:property value="frontEndVersion" /></s:param>
+		</s:url>
+	<script type="text/javascript" src="${url}"></script>
+</s:if>
+
+<s:else>
+
+	
+	 <s:if test="mapInstance.equals('leaflet-google')">
+		<s:url var="url" value="/js/lib/leaflet-google.js">
+		</s:url>
+	</s:if>
+	
+	<s:elseif test="mapInstance.equals('leaflet-bing')">
+		<s:url var="url" value="/js/lib/leaflet-bing.js">
+		</s:url>
+	</s:elseif>
+	 
+	<script src="${url}" type="text/javascript">
+	</script>
+	-->
+	
+	
+	
+
+	<script type="text/javascript" src="${url}"><!-- //prevent jspx minimization -->
+	</script>
+	<s:url var="url" value="/js/oba/map/LeafletMapWrapper.js">
+		<s:param name="v"><s:property value="frontEndVersion" /></s:param>
+	</s:url>
+	<script type="text/javascript" src="${url}"><!-- //prevent jspx minimization --></script>
+	<s:url var="url" value="/js/oba/map/LeafletPopups.js">
+		<s:param name="v"><s:property value="frontEndVersion" /></s:param>
+	</s:url>
+	<script type="text/javascript" src="${url}"><!-- //prevent jspx minimization --></script>
+	<s:url var="url" value="/js/oba/map/LeafletRouteMap.js">
+		<s:param name="v"><s:property value="frontEndVersion" /></s:param>
+	</s:url>
+	<script type="text/javascript" src="${url}"><!-- //prevent jspx minimization --></script>
+	<s:url var="url" value="/js/oba/map/LeafletSidebar.js">
+		<s:param name="v"><s:property value="frontEndVersion" /></s:param>
+	</s:url>
+	<script type="text/javascript" src="${url}"><!-- //prevent jspx minimization --></script>
+<!-- </s:else> 
+
+<script type="text/javascript" src="${url}"></script> -->
+
+
+
+<!-- 
 <s:url var="url" value="/js/oba/map/Popups.js">
 	<s:param name="v"><s:property value="frontEndVersion" /></s:param>
 </s:url>
-<script type="text/javascript" src="${url}"><!-- //prevent jspx minimization --></script>
+<script type="text/javascript" src="${url}"></script>
 
 <s:url var="url" value="/js/oba/map/RouteMap.js">
 	<s:param name="v"><s:property value="frontEndVersion" /></s:param>
 </s:url>
-<script type="text/javascript" src="${url}"><!-- //prevent jspx minimization --></script>
-
+<script type="text/javascript" src="${url}"></script>
+ -->
 <s:url var="url" value="/js/lib/markerAnimate.js">
 	<s:param name="v"><s:property value="frontEndVersion" /></s:param>
 </s:url>
 <script type="text/javascript" src="${url}"><!-- //prevent jspx minimization --></script>
 
-
+<!-- 
 <s:url var="url" value="/js/oba/map/Sidebar.js">
 	<s:param name="v"><s:property value="frontEndVersion" /></s:param>
 </s:url>
-<script type="text/javascript" src="${url}"><!-- //prevent jspx minimization --></script>
+
+<script type="text/javascript" src="${url}"></script> -->
 
 <s:url var="url" value="/js/oba/GoogleTranslate.js">
 	<s:param name="v"><s:property value="frontEndVersion" /></s:param>

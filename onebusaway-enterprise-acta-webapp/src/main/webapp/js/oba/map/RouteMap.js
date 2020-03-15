@@ -525,11 +525,13 @@ OBA.RouteMap = function(mapNode, initCallbackFn, serviceAlertCallbackFn) {
 	 	var iconBase = OBA.Config.urlPrefix + 'img/';
 	        var icons = {
 	          realtime: {
-	            name: 'Real-Time',
+	        	
+	        		
+	            name: ((dictionary!=undefined && dictionary!=null)?getValueFor('js.realtime'): 'Real-Time'),
 	            icon: iconBase + 'realtime/bus/bus.png'
 	          },
 	          scheduled: {
-	            name: 'Scheduled',
+	            name: ((dictionary!=undefined && dictionary!=null)?getValueFor('js.scheduled'): 'Scheduled'),
 	            icon: iconBase + 'scheduled/bus/bus.png'
 	          }
 	        };

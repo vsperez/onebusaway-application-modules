@@ -14,6 +14,15 @@
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
 http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd">
 
+
+<bean id="hibernateProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+        <property name="properties">
+            <props>
+             <prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+            </props>
+            </property>
+   </bean>
+            
 	<!-- Mysql data soruce -->
 	<bean id="dataSource"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
@@ -23,6 +32,7 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 			value="jdbc:mysql://192.168.2.69:3306/oba_gtfs" />
 		<property name="username" value="spring" />
 		<property name="password" value="spring1" />
+		 <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"></property>
 	</bean>
 	<!-- mysql database <bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean"> 
 		<property name="jndiName" value="java:comp/env/jdbc/appDB"/> <property name="lookupOnStartup" 
@@ -50,10 +60,10 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 	<bean
 		class="org.onebusaway.transit_data_federation.impl.realtime.gtfs_realtime.GtfsRealtimeSource">
 		<property name="tripUpdatesUrl"
-			value="http://localhost:8080/api/v1/key/8d31965/agency/11/command/gtfs-rt/tripUpdates" />
+			value="http://192.168.6.25:8090/api/v1/key/8d31965/agency/11/command/gtfs-rt/tripUpdates" />
 		<!-- Optionally set the Vehicle Positions endpoint -->
 		<property name="vehiclePositionsUrl"
-			value="http://localhost:8080/api/v1/key/8d31965/agency/11/command/gtfs-rt/vehiclePositions" />
+			value="http://192.168.6.25:8090/api/v1/key/8d31965/agency/11/command/gtfs-rt/vehiclePositions" />
 		<!-- Optionally set the Service Alerts endpoint -->
 		<!-- <property name="alertsUrl" value="http://url/to/gtfs-realtime/alerts" 
 			/> -->

@@ -35,7 +35,7 @@
   	</bean>
 	
 	<bean id="configurationServiceClient" class="org.onebusaway.util.impl.configuration.ConfigurationServiceClientFileImpl" >
-      	<constructor-arg type="java.lang.String" value="/var/lib/obanyc/config.json"/>
+      	<constructor-arg type="java.lang.String" value="/Volumes/VPEREZ/OBA/config.json"/>
     </bean>
 
     <!-- Database Configuration -->
@@ -58,22 +58,38 @@
 	<!-- to use hsql run from the command line
  		see https://github.com/OneBusAway/onebusaway-application-modules/wiki/HSQLDB-Configuration
 	-->
-	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+	<!-- <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="org.hsqldb.jdbcDriver" />
 		<property name="url" value="jdbc:hsqldb:hsql//localhost/web;hsqldb.lock_file=false" />
 		<property name="username" value="sa" />
 		<property name="password" value="" />
-	</bean>
+	</bean>-->
+	
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+    <property name="driverClassName" value="com.mysql.jdbc.Driver" />
+    <property name="url" value="jdbc:mysql://192.168.2.69:3306/oba_gtfs" />
+    <property name="username" value="spring" />
+    <property name="password" value="spring1" />
+  </bean>
+	
 
 	<alias name="dataSource" alias="mutableDataSource" />
 
 
 
 	<!-- Other Stuff: -->
-	<bean id="serviceAreaServiceImpl" class="org.onebusaway.presentation.impl.ServiceAreaServiceImpl" />
-	<bean id="externalGeocoderImpl"
+	
+	
+	<bean id="serviceAreaServiceImpl" class="org.onebusaway.presentation.impl.ServiceAreaServiceImpl">
+    <property name="calculateDefaultBoundsFromAgencyCoverage" value="true" />
+  </bean>
+	 <bean id="externalGeocoderImpl" class="org.onebusaway.geocoder.enterprise.impl.EnterpriseGoogleGeocoderImpl">
+    <property name="wktFilterPolygon" value="POLYGON((-82.553075 27.978988,-82.533849 27.998997,-82.487511 28.001203, -82.481664 28.055366,-82.426732 28.056578,-82.425359 28.068697,-82.410939 28.069908,-82.410939 28.109889,-82.424672 28.110495,-82.38828 28.146222,-82.389653 28.171042,-82.354634 28.171648,-82.351888 28.143195,-82.314122 28.1438,-82.316182 28.172253,-82.264684 28.170437,-82.305196 28.127451,-82.363561 28.124424,-82.356007 28.069303,-82.402013 28.068697,-82.393086 27.972318,-82.368367 27.970499,-82.377293 27.943205,-82.408193 27.941992,-82.414372 27.914085,-82.461751 27.909231,-82.463811 27.938959,-82.491277 27.920152,-82.47411 27.823034,-82.549641 27.861892,-82.553075 27.978988))" />
+  </bean>
+	
+	<!-- <bean id="externalGeocoderImpl"
 		class="org.onebusaway.geocoder.enterprise.impl.EnterpriseGoogleGeocoderImpl" depends-on="serviceAreaServiceImpl">
-	</bean>
+	</bean>-->
 
 
 	<bean
@@ -97,7 +113,9 @@
 		class="org.onebusaway.presentation.services.cachecontrol.SiriCacheServiceImpl">
 		<property name="disabled" value="${siri.cache.disabled}" />
 	</bean>
-	<!--
+	
+	
+	<!-- 
 	<jee:jndi-lookup id="xwikiUrlBean" jndi-name="java:comp/env/xwikiUrl" resource-ref="true" ></jee:jndi-lookup>
 	<jee:jndi-lookup id="xwikiDocumentEditUrlBean" jndi-name="java:comp/env/wikiDocumentEditUrl" resource-ref="true" ></jee:jndi-lookup>
 	<jee:jndi-lookup id="xwikiAttachmentUrlBean" jndi-name="java:comp/env/wikiAttachmentUrl" resource-ref="true" ></jee:jndi-lookup>
@@ -111,6 +129,14 @@
 		<property name="wikiDocumentEditUrl" ref="xwikiDocumentEditUrlBean" />
 		<property name="wikiAttachmentUrl" ref="xwikiAttachmentUrlBean" />
 	</bean>
-    -->
-	<import resource="classpath:branded-sources.xml" />
+     -->
+       <bean id="wikiDocumentService" class="org.onebusaway.wiki.file.FileWikiDocumentServiceImpl">
+    <property name="documentDirectory" value="/srv/www/oba/wiki/" />
+</bean>
+  
+<bean id="wikiRenderingService" class="org.onebusaway.wiki.xwiki.impl.XWikiRenderingServiceImpl">
+    <property name="wikiDocumentViewUrl" value="/p/%{documentName}.action" />
+    <property name="wikiAttachmentUrl" value="/p/%{documentName}@%{attachmentName}!attachment.action" />
+</bean>
+	 <import resource="classpath:branded-sources.xml" />
 </beans>

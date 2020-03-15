@@ -49,7 +49,7 @@ if(typeof OBA !== 'undefined' &amp;&amp; typeof OBA.Config !== 'undefined') {
 
 			if(type === "stop")	{
 				html += '<div class="footer">';
-				html += '<span class="header">While at the bus stop...</span>';
+				html += '<span class="header"><s:i18n name='onebusaway-enterprise'><s:text name='whileAtBusStop'/></s:i18n></span>';
 				html += '<br/>';
 				
 				if(OBA.Config.showSMS === "true"){
@@ -68,7 +68,7 @@ if(typeof OBA !== 'undefined' &amp;&amp; typeof OBA.Config !== 'undefined') {
 
 			} else if(type === "route") {
 				html += '<div class="footer">';
-				html += '<span class="header">While at the bus stop...</span>';
+				html += '<span class="header"><s:i18n name='onebusaway-enterprise'><s:text name='whileAtBusStop'/></s:i18n></span>';
 				html += '<br/>';
 				html += 'Check <a href="queryLink">this route</a> on your smartphone.';
 

@@ -244,9 +244,10 @@
               					<artifactId>onebusaway-enterprise-webapp</artifactId>
               				</overlay>
                         </overlays>
+                        <failOnMissingWebXml>false</failOnMissingWebXml>
                     </configuration>
                 </plugin>
-                <plugin>
+                <!-- <plugin>
 					<groupId>com.mycila</groupId>
 					<artifactId>license-maven-plugin</artifactId>
 					<configuration>
@@ -258,8 +259,9 @@
 							<exclude>overlays/**</exclude>
 						</excludes>
 					</configuration>
-				</plugin>
+				</plugin> -->
 			</plugins>
 		</pluginManagement>
+		
   </build>
 </project>

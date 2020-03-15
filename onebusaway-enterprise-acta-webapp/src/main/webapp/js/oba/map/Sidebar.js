@@ -367,7 +367,7 @@ OBA.Sidebar = function() {
 				if (routeResult.directions.length == 0) {
 					var noServiceMessage = jQuery("<div></div>")
 						.addClass("no-service")
-						.text("No scheduled service today for the " +
+						.text( ((dictionary!=undefined && dictionary!=null)?getValueFor('js.noScheduleServiceTodayFor'): 'No scheduled service today for the')    +" " +
 							getRouteShortName(routeResult));
 
 					descriptionBox.append(noServiceMessage);
@@ -384,9 +384,9 @@ OBA.Sidebar = function() {
 					if(direction.hasUpcomingScheduledService === false) {
 						var noServiceMessage = jQuery("<div></div>")
 													.addClass("no-service")
-													.text("No scheduled service for the " + 
+													.text(   ((dictionary!=undefined && dictionary!=null)?getValueFor('js.noScheduleServiceFor'): 'No scheduled service for the')    +" " + 
 															getRouteShortName(routeResult) + 
-															" to " + direction.destination + " at this time.");
+															" "+ ((dictionary!=undefined && dictionary!=null)?getValueFor('js.to'):"to")+" " + direction.destination + " "+ ((dictionary!=undefined && dictionary!=null)?getValueFor('js.atThisTime'): 'at this time.') );
 	
 						directionHeader.append(noServiceMessage);
 					}
@@ -670,7 +670,7 @@ OBA.Sidebar = function() {
 						// result is a region
 						if(matches[0].isRegion === true) {
 							if(matches[0].nearbyRoutes.length === 0) {
-								showNoResults("No stops nearby.");
+								showNoResults("No hay paraderos cercanos.");
 							} else {
 								showRoutePickerList(matches[0].nearbyRoutes);								
 							}
@@ -686,9 +686,9 @@ OBA.Sidebar = function() {
 						// result is a point--intersection or address
 						} else {
 							if(matches[0].nearbyRoutes.length === 0) {
-								showNoResults("No stops nearby.");
+								showNoResults("No hay paraderos cercanos.");
 							} else {
-								addRoutesToLegend(matches[0].nearbyRoutes, "Nearby routes:", null, null);
+								addRoutesToLegend(matches[0].nearbyRoutes, "Recorridos cercanas:", null, null);
 							}
 							
 							var latlng = new google.maps.LatLng(matches[0].latitude, matches[0].longitude);
@@ -702,14 +702,14 @@ OBA.Sidebar = function() {
 						break;
 				
 					case "RouteResult":
-						addRoutesToLegend(matches, "Routes:", null, null);
+						addRoutesToLegend(matches, "Recorridos:", null, null);
 
 						routeMap.panToRoute(matches[0].id);
 						(wizard && wizard.enabled()) ? results.triggerHandler('route_result') : null;
 						break;
 					
 					case "StopResult":
-						addRoutesToLegend(matches[0].routesAvailable, "Routes available:", routeFilterShortName, matches[0].id);
+						addRoutesToLegend(matches[0].routesAvailable, "Recorridos disponibles:", routeFilterShortName, matches[0].id);
 
 						var latlng = new google.maps.LatLng(matches[0].latitude, matches[0].longitude);
                         if (showPopup != undefined && !showPopup) {
@@ -728,7 +728,7 @@ OBA.Sidebar = function() {
 				
 			} else if (matches.length > 1 && resultType == "RouteResult") {
 				// suppport multiple routes found
-				addRoutesToLegend(matches, "Routes:", null, null);
+				addRoutesToLegend(matches, "Recorridos:", null, null);
 				routeMap.panToRoute(matches[0].id);
 				(wizard && wizard.enabled()) ? results.triggerHandler('route_result') : null;
 			} else if (matches.length > 1 && resultType == "StopResult") {

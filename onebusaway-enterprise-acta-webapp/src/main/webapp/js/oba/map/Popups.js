@@ -118,7 +118,7 @@ OBA.Popups = (function() {
 			var age = parseInt(timestampContainer.attr("age"), 10);
 			var referenceEpoch = parseInt(timestampContainer.attr("referenceEpoch"), 10);
 			var newAge = age + ((new Date().getTime() - referenceEpoch) / 1000);
-			timestampContainer.text("Data updated " + OBA.Util.displayTime(newAge));
+			timestampContainer.text(   ((dictionary!=undefined && dictionary!=null)?getValueFor('js.dataUpdated'): 'Data updated')    +" " + OBA.Util.displayTime(newAge));
 		};
 		updateTimestamp();		
 		infoWindow.updateTimestamp = updateTimestamp;
@@ -274,7 +274,7 @@ OBA.Popups = (function() {
 		html += '<span class="updated' + staleClass + '"' + 
 				' age="' + age + '"' + 
 				' referenceEpoch="' + new Date().getTime() + '"' + 
-				'>Data updated ' 
+				'>'+   ((dictionary!=undefined && dictionary!=null)?getValueFor('js.dataUpdated'): 'Data updated')    +' ' + 
 				+ OBA.Util.displayTime(age) 
 				+ '</span>'; 
 		
@@ -403,7 +403,7 @@ OBA.Popups = (function() {
 		
 		html += '<div class="header stop">';
 		html += '<p class="title">' + stopResult.name + '</p><p>';
-		html += '<span class="type">' + OBA.Config.stopTerm + ' ' + stopCode + '</span>';
+		html += '<span class="type">' +  ((dictionary!=undefined && dictionary!=null)?getValueFor('js.stopcode'): 'Stopcode')    + ' ' + stopCode + '</span>';
 		
 		// update time across all arrivals
 		var updateTimestampReference = OBA.Util.ISO8601StringToDate(siri.Siri.ServiceDelivery.ResponseTimestamp).getTime();
@@ -426,7 +426,7 @@ OBA.Popups = (function() {
 			html += '<span class="updated' + staleClass + '"' + 
 					' age="' + age + '"' + 
 					' referenceEpoch="' + new Date().getTime() + '"' + 
-					'>Data updated ' 
+					'>'+   ((dictionary!=undefined && dictionary!=null)?getValueFor('js.dataUpdated'): 'Data updated')    +' '   
 					+ OBA.Util.displayTime(age) 
 					+ '</span>'; 
 		}
@@ -502,7 +502,7 @@ OBA.Popups = (function() {
                      routeAndDirectionWithoutSerivce[route.id + "_" + direction.directionId] = { "id":route.id, "shortName":route.shortName, "destination":direction.destination };
                      routeAndDirectionWithoutSerivceCount++;
                  } else {
-                     routeAndDirectionWithoutArrivals[route.id + "_" + direction.directionId + "_" + direction.destination.hashCode()] = { "id":route.id, "shortName":route.shortName, "destination":direction.destination };
+                     routeAndDirectionWithoutArrivals[route.id + "_" + direction.directionId + "_" + (direction.destination!=null)? direction.destination.hashCode(): "--" ] = { "id":route.id, "shortName":route.shortName, "destination":direction.destination };
                      routeAndDirectionWithoutArrivalsCount++;
                  }
              });
@@ -520,7 +520,9 @@ OBA.Popups = (function() {
              }
 
              var directionId = monitoredJourney.MonitoredVehicleJourney.DirectionRef;
-             var destinationNameHash = monitoredJourney.MonitoredVehicleJourney.DestinationName.hashCode();
+             var destinationNameHash ="--"
+             if(monitoredJourney.MonitoredVehicleJourney.DestinationName!=null)
+            	 var destinationNameHash = monitoredJourney.MonitoredVehicleJourney.DestinationName.hashCode();
 
              if(typeof routeAndDirectionWithArrivals[routeId + "_" + directionId + "_" + destinationNameHash] === 'undefined') {
                  routeAndDirectionWithArrivals[routeId + "_" + directionId + "_" + destinationNameHash] = [];
@@ -543,7 +545,7 @@ OBA.Popups = (function() {
 
              // service available
              if(routeAndDirectionWithArrivalsCount > 0) {
-                 html += '<p class="service">Buses en-route:</p>';
+                 html += '<p class="service">'+((dictionary!=undefined && dictionary!=null)?getValueFor('js.busesenroute'): 'Buses en-route')+':</p>';
 
                  jQuery.each(routeAndDirectionWithArrivals, function(_, mvjs) {
                      var mvj = mvjs[0];
@@ -657,7 +659,7 @@ OBA.Popups = (function() {
 		}
 		
 		if(routeAndDirectionWithoutArrivalsCount > 0) {
-		    html += '<p class="service muted">No buses en-route to this stop for:</p>';
+		    html += '<p class="service muted">'+((dictionary!=undefined && dictionary!=null)?getValueFor('js.noBusesEnRouteForThisStop'): 'No buses en-route to this stop for:')+'</p>';
 
 			html += '<ul>';
 			var i = 0;
@@ -671,12 +673,12 @@ OBA.Popups = (function() {
 				
 				i++;
 			});
-			html += "<li><a href=\'" + OBA.Config.urlPrefix + "where/schedule?id=" + stopResult.id +"\'>(click here for schedule)</a></li>";
+			html += "<li><a href=\'" + OBA.Config.urlPrefix + "where/schedule?id=" + stopResult.id +"\'>("+((dictionary!=undefined && dictionary!=null)?getValueFor('js.clickforshcedue'): 'click here for schedule')+")</a></li>";//clickforshcedue
 			html += '</ul>';
 		}
 
 		if(routeAndDirectionWithoutSerivceCount > 0) {
-			html += '<p class="service muted">No scheduled service at this time for:</p>';
+			html += '<p class="service muted">'+((dictionary!=undefined && dictionary!=null)?getValueFor('js.noScheduleServiceAtThisHour'): 'No scheduled service at this time for:')+'</p>';
 
 			html += '<ul class="no-service-routes">';
 			var i = 0;
@@ -701,7 +703,7 @@ OBA.Popups = (function() {
 			html += OBA.Config.infoBubbleFooterFunction("stop", stopCode);
 
 		html += "<ul class='links'>";
-		html += "<a href='#' id='zoomHere'>Center & Zoom Here</a>&nbsp;&nbsp;&nbsp;<a href='" + OBA.Config.urlPrefix + "where/schedule?id=" + stopResult.id +"' id='schedule'>View Schedule</a>";
+		html += "<a href='#' id='zoomHere'>"+((dictionary!=undefined && dictionary!=null)?getValueFor('js.centerZoom'): 'Center & Zoom Here')+"</a>&nbsp;&nbsp;&nbsp;<a href='" + OBA.Config.urlPrefix + "where/schedule?id=" + stopResult.id +"' id='schedule'>"+((dictionary!=undefined && dictionary!=null)?getValueFor('js.viewSchedule'): 'View Schedule')+"</a>";
 		html += "</ul>";
 		
 		// (end popup)

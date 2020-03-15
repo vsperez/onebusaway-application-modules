@@ -30,7 +30,7 @@
     </head>
     <body>
         <div id="content">
-            <h3>Routes</h3>
+            <h3><s:property value="getText('search.results')" /><</h3>
             <div class="routeList">
                 <p>
                     <s:iterator value="routes">

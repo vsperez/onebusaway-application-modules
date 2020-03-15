@@ -172,6 +172,17 @@
 
   <bean id="gtfsStats" class="org.onebusaway.transit_data_federation.bundle.tasks.GtfsStatisticsTask" />
   
+  <bean id="multiCvsLogger" class="org.onebusaway.transit_data_federation.bundle.tasks.MultiCSVLogger" />
+  <bean id="stopConsolidationSuggestionsTask" class="org.onebusaway.transit_data_federation.bundle.tasks.StopConsolidationSuggestionsTask">
+  </bean>
+  
+   <bean class="org.onebusaway.transit_data_federation.bundle.model.TaskDefinition">
+    <property name="taskName" value="stopConsolidationSuggestionsTask" />
+    <property name="afterTaskName" value="gtfs_stats" />
+    <property name="task" ref="stopConsolidationSuggestionsTask" />
+  </bean>
+
+      
       
   <!-- <bean id="bundleManagementService" class="org.onebusaway.transit_data_federation.impl.bundle.SingleBundleManagementServiceImpl" /> -->
 

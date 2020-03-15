@@ -20,7 +20,7 @@
 	xmlns:wiki="/oba-wiki-tags">
 
 	<h3>
-			Nearby Routes:
+			<s:property value="getText(nearby.routes)" />:
 	</h3>
 		
 	<div class="routeList">

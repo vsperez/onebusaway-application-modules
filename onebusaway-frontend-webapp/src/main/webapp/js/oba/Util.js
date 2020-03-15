@@ -112,7 +112,7 @@ OBA.Util = (function() {
 
 			var minutesAway = Math.floor((predictionDateObj - referenceDateObj) / 60 / 1000);
 
-			return minutesAway + " " + (minutesText || "minute") + ((Math.abs(minutesAway) === 1) ? "" : "s");
+			return minutesAway + " " +  ((Math.abs(minutesAway) === 1) ?  ((dictionary!=undefined && dictionary!=null)?getValueFor('js.unitMinute'): 'minute') :  ((dictionary!=undefined && dictionary!=null)?getValueFor('js.unitMinutes'): 'minutes')  );
 		},
 		getArrivalEstimateForISOStringWithCheck: function(predictionDateString, referenceDateObj, minutesText, distanceAway) {
 			if(typeof predictionDateString === 'undefined' || predictionDateString === null) {
@@ -141,16 +141,16 @@ OBA.Util = (function() {
 		displayTime: function(secondsAgo) {
 			secondsAgo = Math.floor(secondsAgo);
 			if(secondsAgo < 60) {
-				return secondsAgo + " second" + ((secondsAgo === 1) ? "" : "s") + " ago";
+				return secondsAgo +" "+ ((secondsAgo === 1) ?   ((dictionary!=undefined && dictionary!=null)?getValueFor('js.unitSecond'): 'second') :   ((dictionary!=undefined && dictionary!=null)?getValueFor('js.unitSeconds'): 'seconds') ) + " "+  ((dictionary!=undefined && dictionary!=null)?getValueFor('js.unitSufix'): 'ago')  ;
 			} else {
 				var minutesAgo = Math.floor(secondsAgo / 60);
 				secondsAgo = secondsAgo - (minutesAgo * 60);
 				
-				var s = minutesAgo + " minute" + ((minutesAgo === 1) ? "" : "s");
+				var s = minutesAgo + " " + ((minutesAgo === 1) ? ((dictionary!=undefined && dictionary!=null)?getValueFor('js.unitMinute'): 'minute') : ((dictionary!=undefined && dictionary!=null)?getValueFor('js.unitMinutes'): 'minutes'));
 				if(secondsAgo > 0) {
-					s += ", " + secondsAgo + " second" + ((secondsAgo === 1) ? "" : "s");
+					s += ", " + secondsAgo +" "+ ((secondsAgo === 1) ?   ((dictionary!=undefined && dictionary!=null)?getValueFor('js.unitSecond'): 'second') :   ((dictionary!=undefined && dictionary!=null)?getValueFor('js.unitSeconds'): 'seconds') );
 				}
-				s += " ago";
+				s += ((dictionary!=undefined && dictionary!=null)?getValueFor('js.unitSufix'): 'ago')  ;
 				return s;
 			}
 		},

@@ -155,7 +155,7 @@ public class FederatedTransitDataBundleCreatorMain {
 
 
       File outputPath = new File(remainingArgs[remainingArgs.length - 1]);
-
+      System.out.println("outputPath :"+outputPath);
       if (commandLine.hasOption(ARG_ONLY_IF_DNE) && outputPath.exists()) {
         System.err.println("Bundle path already exists.  Exiting...");
         System.exit(0);

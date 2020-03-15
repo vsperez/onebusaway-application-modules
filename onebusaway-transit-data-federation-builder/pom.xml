@@ -15,7 +15,11 @@
 			<artifactId>onebusaway-transit-data-federation</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-
+ <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.17</version>
+        </dependency>
 		<dependency>
 			<groupId>org.onebusaway</groupId>
 			<artifactId>onebusaway-gtfs-hibernate-spring</artifactId>

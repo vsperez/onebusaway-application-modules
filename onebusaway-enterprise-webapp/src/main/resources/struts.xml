@@ -21,7 +21,8 @@
     "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
     "http://struts.apache.org/dtds/struts-2.0.dtd">
 <struts>
-	<constant name="struts.locale" value="en_US"/> 
+	<constant name="struts.locale" value="es_CL"/>
+	 
 	<constant name="struts.ui.theme" value="simple"/>   
 	<constant name="struts.convention.action.suffix" value="Action" />    
     <constant name="struts.convention.action.mapAllMatches" value="true" />
@@ -29,6 +30,7 @@
     <constant name="struts.convention.action.checkImplementsAction" value="false" />
     <constant name="struts.convention.default.parent.package" value="onebusaway-webapp-default" />
     <constant name="struts.custom.i18n.resources" value="onebusaway-enterprise" />
+     <constant name="struts.i18n.encoding" value="UTF-8"/> 
     <!-- constant name="struts.devMode" value="true" /-->
 
 	<bean type="org.apache.struts2.components.template.TemplateEngine" name="jspx" class="org.apache.struts2.components.template.JspTemplateEngine" />

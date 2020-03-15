@@ -55,10 +55,10 @@
 }
 
 #bustime #header .title h1 a {
-	width: 302px;
-	height: 58px;
+	width: 227px;
+	height: 73px;
 	display: block;
-	background-image: url('img/onebusaway-nyc.png');
+	background-image: url('img/buscity.png');
 	background-repeat: no-repeat;
 	text-indent: -9999px;
 }
@@ -112,25 +112,25 @@
 
 /* header on map page */
 #bustime #map_header {
-	width: 302px;
-	height: 105px;
+	width: 350px;
+	height: 50px;
 	padding-top: 10px;
 	display: block;
 }
 
 #bustime #map_header .title h1 a {
-	width: 302px;
-	height: 58px;
+	width: 350px;
+	height: 10px;
 	display: block;
-	background-image: url('img/onebusaway-nyc.png');
-	background-repeat: no-repeat;
+/*	background-image: url('img/buscity.png');
+	background-repeat: no-repeat;*/
 	text-indent: -9999px;
 }
 
 #bustime #map_header ul {
 	position: relative;
 	margin-top: 10px;
-	width: 302px;
+	width: 350px;
 }
 
 #bustime #map_header ul li {
@@ -154,12 +154,13 @@
 	padding-top: 4px;
     padding-bottom: 4px;
     text-align: center;
+    
 }
 #bustime #map_header ul #link_mobile {
 	width: 84px;
 }
 #bustime #map_header ul #link_about {
-	width: 46px;
+	width: 60px;
 }
 #bustime #map_header ul #link_contact {
 	width: 55px;
