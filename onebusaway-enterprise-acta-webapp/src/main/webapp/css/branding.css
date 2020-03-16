@@ -112,14 +112,14 @@
 
 /* header on map page */
 #bustime #map_header {
-	width: 350px;
+	width: 330px;
 	height: 50px;
 	padding-top: 10px;
 	display: block;
 }
 
 #bustime #map_header .title h1 a {
-	width: 350px;
+	width: 330px;
 	height: 10px;
 	display: block;
 /*	background-image: url('img/buscity.png');
@@ -130,7 +130,7 @@
 #bustime #map_header ul {
 	position: relative;
 	margin-top: 10px;
-	width: 350px;
+	width: 330px;
 }
 
 #bustime #map_header ul li {
@@ -145,7 +145,7 @@
 
 #bustime #map_header ul li a {
 	text-decoration: none;
-   	background-color: #3399C9;
+   	background-color: #2670a6;
     color: #FFFFFF;
     display: block;
     font-weight: bold;
@@ -154,25 +154,30 @@
 	padding-top: 4px;
     padding-bottom: 4px;
     text-align: center;
+    border-color:#2670a6;
+    border: 1px solid;
     
 }
 #bustime #map_header ul #link_mobile {
-	width: 84px;
-}
-#bustime #map_header ul #link_about {
 	width: 60px;
 }
+#bustime #map_header ul #link_about {
+	width: 80px;
+}
 #bustime #map_header ul #link_contact {
-	width: 55px;
+	width: 70px;
 }
 #bustime #map_header ul #link_developers {
 	width: 75px;
 }
 #bustime #map_header ul #link_help {
-	width: 37px;
+	width: 70px;
 }
 #bustime #map_header ul li a:hover {
-    background-color: #94CB45;
+	background-color: #FFFFFF;
+    color: #2670a6;
+    border-color:#2670a6;
+    border: 1px solid;
 }
 #bustime #content {
 	padding-top: 0;
@@ -237,7 +242,7 @@ html, body {
     width: 960px;
 }
 #topbar {
-    height: 121px;
+    height: 90px;
 }
 #topbar #branding {
     float: left;

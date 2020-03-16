@@ -88,6 +88,7 @@ dictionary.set('js.clickforshcedue',"<s:i18n name='onebusaway-enterprise'><s:tex
 dictionary.set('js.viewSchedule',"<s:i18n name='onebusaway-enterprise'><s:text name='js.viewSchedule'/></s:i18n>");
 dictionary.set('js.centerZoom',"<s:i18n name='onebusaway-enterprise'><s:text name='js.centerZoom'/></s:i18n>");
 dictionary.set('js.to',"<s:i18n name='onebusaway-enterprise'><s:text name='js.to'/></s:i18n>");
+dictionary.set('js.noMatches',"<s:i18n name='onebusaway-enterprise'><s:text name='js.noMatches'/></s:i18n>");
 
 
 
@@ -191,40 +192,40 @@ dictionary.set('js.to',"<s:i18n name='onebusaway-enterprise'><s:text name='js.to
 		  		</div>	  	
 		   	  	<ul>
 		   	  		<s:url var="url" namespace="/m" action="index"/>
-					<li id="link_mobile" aria-label="Text only version"><a href="${url}"><s:property value="getText('link.mobile')" escapeHtml="false" escape="false" /></a></li>
+					<li id="link_mobile" aria-label="Text only version"><a href="${url}"><s:i18n name='onebusaway-enterprise'><s:text name='link.mobile'/></s:i18n></a></li>
 
 					<s:url var="url" namespace="/wiki" action="About"/>
-					<li id="link_about"><a href="${url}"><s:property value="getText('link.about')" escapeHtml="false" escape="false"/></a></li>
+					<li id="link_about"><a href="${url}"><s:i18n name='onebusaway-enterprise'><s:text name='link.about'/></s:i18n></a></li>
 
 					<s:url var="url" namespace="/wiki" action="ContactUs"/>
-					<li id="link_contact"><a href="${url}"><s:property value="getText('link.contact')" /></a></li>
+					<li id="link_contact"><a href="${url}"><s:i18n name='onebusaway-enterprise'><s:text name='link.contact'/></s:i18n></a></li>
 
 		 			<!-- <s:url var="url" namespace="/wiki/Developers" action="Index"/>
 		 			<li id="link_developers"><a href="${url}"><s:property value="getText('link.developers')" /></a></li>
  -->
 		 			<s:url var="url" namespace="/wiki/Help" action="Index"/>
-		 			<li id="link_help"><a href="${url}"><s:property value="getText('link.help')" /></a></li>
+		 			<li id="link_help"><a href="${url}"><s:i18n name='onebusaway-enterprise'><s:text name='link.help'/></s:i18n></a></li>
 			   	</ul>
 		   </div>
 
 	       <form action="search.action">
 	         <input type="text" name="q" value=""/>
 	         <input type="submit" value="Find" class="submit"/>
-	         <p id="tip"><s:property value="getText('search.tip')" /></p>
+	         <p id="tip"><s:i18n name='onebusaway-enterprise'><s:text name='search.tip'/></s:i18n></p>
 	       </form>
 	       
 	       <div id="matches">
-	       	 <h2><s:property value="getText('search.results')" />:</h2>
+	       	 <h2><s:i18n name='onebusaway-enterprise'><s:text name='search.result'/></s:i18n>:</h2>
 	       	 <ul><!-- //prevent jspx minimization --></ul>
 		   </div>
 		   
 		   <div id="filtered-matches">
-		   	<h2>Other routes here:</h2>
+		   	<h2><s:i18n name='onebusaway-enterprise'><s:text name='other.routes:'></s:text></s:i18n></h2>
 		   	<ul><!-- //prevent jspx minimization --></ul>
 		   </div>
 	
 	       <div id="suggestions">
-	       	 <h2>Did You Mean?</h2>
+	       	 <h2><s:i18n name='onebusaway-enterprise'><s:text name='did.you.mean'></s:text></s:i18n></h2>
 	       	 <ul></ul>
 		   </div>
 		            
@@ -232,7 +233,7 @@ dictionary.set('js.to',"<s:i18n name='onebusaway-enterprise'><s:text name='js.to
 	
 		   <div id="loading">
 			   	<div class="loading">
-			   		<span>Loading...</span>
+			   		<span><s:i18n name='onebusaway-enterprise'><s:text name='loading'/></s:i18n></span>
 		   		</div>
 		   </div>
 	
@@ -240,12 +241,12 @@ dictionary.set('js.to',"<s:i18n name='onebusaway-enterprise'><s:text name='js.to
 			<c:import url="includes/welcome.jspx" />
 		   
 			<s:url var="url" namespace="/routes" action="index"/>
-			<div id="available-routes"><a href="${url}"><s:property value="getText('click.here')" /></a>&#160;<s:property value="getText('list.routes')" /></div>
+			<div id="available-routes"><a href="${url}"><s:i18n name='onebusaway-enterprise'><s:text name='click.here'/></s:i18n></a>&#160;<s:property value="getText('list.routes')" /></div>
 		   
 			<div id="cant-find">
-				<h2>Can't find your bus route?</h2>
+				<h2><s:i18n name='onebusaway-enterprise'><s:text name='cant.find'/></s:i18n></h2>
 				<s:url var="url" namespace="/routes" action="index" />
-				<p><s:property value="getText('main.cantfindroute.text')" /> <a href="${url}">Click here</a> to see which routes are currently available.</p>
+				<p><s:i18n name='onebusaway-enterprise'><s:text name='main.cantfindroute.text'/></s:i18n>&#160; <a href="${url}"><s:i18n name='onebusaway-enterprise'><s:text name='click.here'/></s:i18n></a>&#160; <s:i18n name='onebusaway-enterprise'><s:text name='see.available.routes'/></s:i18n></p>
 			</div>
 			
 			<s:if test="globalServiceAlerts!=null">
@@ -276,10 +277,11 @@ dictionary.set('js.to',"<s:i18n name='onebusaway-enterprise'><s:text name='js.to
 			</a>
 
 		</div>
-		<div class="container clear"><!-- jspx --></div>
+		<!-- <div class="container clear"></div>
 	  	<s:url var="url" value="/css/img/google_logo.png"></s:url>
 		<div id="google_translate_element_side">Google Translate <img id="icon" src="${url}" /></div>
-    </div>
+		-->
+    </div> 
 
 	<div id="map"><!-- //prevent jspx minimization --></div>
 	<div id="legend"><!-- //prevent jspx minimization --></div>
@@ -305,31 +307,31 @@ dictionary.set('js.to',"<s:i18n name='onebusaway-enterprise'><s:text name='js.to
 			    	<s:url var="url" namespace="/m" action=""/>
 			    	<a href="${url}" target="_new">
 			    		<p>Mobile Web</p>
-			    		<a rel="popover"><div id="smartphone_img">&amp;nbsp;</div></a>
+			    		<a rel="popover"><div id="smartphone_img">&amp;&#160;</div></a>
 			    	</a>
 			    </li>
 			    <li id="wizard-col4">
 			    	<s:url var="url" namespace="/wiki/Help" action="SMSOverview"/>
 			    	<a href="${url}" target="_new">
 			    		<p>SMS</p>
-			    		<a rel="popover"><div id="sms_img">&amp;nbsp;</div></a>
+			    		<a rel="popover"><div id="sms_img">&amp;&#160;</div></a>
 			    	</a>
 			    </li>
 			</ul>
 			<a class="close"><span class="close_txt">Close</span> ×</a>
 		</div>
 		<div id="wizard_didyoumean">
-			<a data-placement="right" class="wizard_panel" rel="popover">&amp;nbsp;</a>
+			<a data-placement="right" class="wizard_panel" rel="popover">&amp;&#160;</a>
 			<a class="close"><span class="close_txt">Close</span> ×</a>
 		</div>
 		<div id="wizard_inuse">
-			<a data-placement="right" class="wizard_panel" rel="popover">&amp;nbsp;</a>
+			<a data-placement="right" class="wizard_panel" rel="popover">&amp;&#160;</a>
 			<span class="text_span">Follow the instructions above . . .</span>
 			<a class="close"><span class="close_txt">Close</span> ×</a>
 		</div>
 		<div id="wizard_finaltip">
 			<div>
-				<p><span style="font-weight: bold;">Tips:</span> <a data-placement="right" class="wizard_panel" rel="popover">&amp;nbsp;</a> <s:property value="getText('main.application.name')" /> is also available via <a id="wizard_mobile" rel="popover">Mobile Web</a> or <a id="wizard_sms" rel="popover">SMS/Text Message</a>.</p>
+				<p><span style="font-weight: bold;">Tips:</span> <a data-placement="right" class="wizard_panel" rel="popover">&amp;&#160;</a> <s:property value="getText('main.application.name')" /> is also available via <a id="wizard_mobile" rel="popover">Mobile Web</a> or <a id="wizard_sms" rel="popover">SMS/Text Message</a>.</p>
 				<p>Remember your Stopcode from the pop-ups or find it on a <a id="tips_code_popup" rel="popover" data-placement="above">bus stop pole box</a>.</p>
 				<p id="sharelinks"><a id="wizard_share" rel="popover">Share</a> this link and tell others about <s:property value="getText('main.application.name')" />!
 					<s:set var="link" value="getText('main.agency.twitter.link')" />

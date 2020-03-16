@@ -657,7 +657,7 @@ OBA.Sidebar = function() {
 			OBA.Config.analyticsFunction("Search", q + " [M:" + matches.length + " S:" + suggestions.length + "]");
 
 			if(empty === true) {
-				showNoResults("No matches.");
+				showNoResults(((dictionary!=undefined && dictionary!=null)?getValueFor('js.noMatches'): 'No matches.'));
 				return;
 			} else {
 				noResults.hide();
