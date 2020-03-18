@@ -20,7 +20,11 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.struts2.interceptor.ServletRequestAware;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.onebusaway.gtfs.model.AgencyAndId;
 import org.onebusaway.gtfs.model.calendar.ServiceDate;
@@ -49,163 +53,171 @@ import uk.org.siri.siri.ServiceDelivery;
 import uk.org.siri.siri.Siri;
 import uk.org.siri.siri.StopMonitoringDeliveryStructure;
 
-public class StopForIdAction extends OneBusAwayEnterpriseActionSupport {
-    
-  private static final long serialVersionUID = 1L;
+public class StopForIdAction extends OneBusAwayEnterpriseActionSupport implements ServletRequestAware {
 
-  @Autowired
-  private RealtimeService _realtimeService;
+	private static final long serialVersionUID = 1L;
 
-  @Autowired
-  private TransitDataService _transitDataService;
+	@Autowired
+	private RealtimeService _realtimeService;
 
-  @Autowired
-  private ConfigurationService _configService;
+	@Autowired
+	private TransitDataService _transitDataService;
 
-  private ObjectMapper _mapper = new ObjectMapper();    
+	@Autowired
+	private ConfigurationService _configService;
 
-  private ServiceAlertsHelper _serviceAlertsHelper = new ServiceAlertsHelper();
+	private ObjectMapper _mapper = new ObjectMapper();    
 
-  private Siri _response = null;
+	private ServiceAlertsHelper _serviceAlertsHelper = new ServiceAlertsHelper();
 
-  private StopResult _result = null;
-  
-  private String _stopId = null;
+	private Siri _response = null;
 
-  public void setStopId(String stopId) {
-    _stopId = stopId;
-  }
+	private StopResult _result = null;
 
-  private static Logger _log = LoggerFactory.getLogger(StopForIdAction.class);
+	private String _stopId = null;
+	private HttpServletRequest _request;
 
-  
-  @Override
-  public String execute() {
-    try {
-      if (_stopId == null) {
-        return SUCCESS;
-      }
+	public void setStopId(String stopId) {
+		_stopId = stopId;
+	}
 
-      boolean serviceDateFilterOn = Boolean.parseBoolean(_configService.getConfigurationValueAsString("display.serviceDateFiltering", "false"));
-      StopBean stop;
+	private static Logger _log = LoggerFactory.getLogger(StopForIdAction.class);
 
-      if (serviceDateFilterOn) {
-        stop = _transitDataService.getStopForServiceDate(_stopId, new ServiceDate(new Date(SystemTime.currentTimeMillis())));
-      } else {
-        stop = _transitDataService.getStop(_stopId);
-      }
 
-      if (stop == null) {
-        return SUCCESS;
-      }
+	@Override
+	public String execute() {
 
-      List<RouteAtStop> routesAtStop = new ArrayList<RouteAtStop>();
+		try {
+			if (_stopId == null) {
+				return SUCCESS;
+			}
+			Locale locale=_request.getLocale();
+			boolean serviceDateFilterOn = Boolean.parseBoolean(_configService.getConfigurationValueAsString("display.serviceDateFiltering", "false"));
+			StopBean stop;
 
-      for (RouteBean routeBean : stop.getRoutes()) {
-        StopsForRouteBean stopsForRoute;
-        if (serviceDateFilterOn) {
-          stopsForRoute = _transitDataService.getStopsForRouteForServiceDate(routeBean.getId(), new ServiceDate(new Date(SystemTime.currentTimeMillis())));
-        } else {
-          stopsForRoute = _transitDataService.getStopsForRoute(routeBean.getId());
-        }
+			if (serviceDateFilterOn) {
+				stop = _transitDataService.getStopForServiceDate(_stopId, new ServiceDate(new Date(SystemTime.currentTimeMillis())));
+			} else {
+				stop = _transitDataService.getStop(_stopId);
+			}
 
-        List<RouteDirection> routeDirections = new ArrayList<RouteDirection>();
-        List<StopGroupingBean> stopGroupings = stopsForRoute.getStopGroupings();
-        for (StopGroupingBean stopGroupingBean : stopGroupings) {
-          for (StopGroupBean stopGroupBean : stopGroupingBean.getStopGroups()) {
-            if (_transitDataService.stopHasRevenueServiceOnRoute((routeBean.getAgency() != null ? routeBean.getAgency().getId() : null),
-                _stopId, routeBean.getId(), stopGroupBean.getId())) {
+			if (stop == null) {
+				return SUCCESS;
+			}
 
-              NameBean name = stopGroupBean.getName();
-              String type = name.getType();
+			List<RouteAtStop> routesAtStop = new ArrayList<RouteAtStop>();
 
-              if (!type.equals("destination"))
-                continue;
+			for (RouteBean routeBean : stop.getRoutes()) {
+				StopsForRouteBean stopsForRoute;
+				if (serviceDateFilterOn) {
+					stopsForRoute = _transitDataService.getStopsForRouteForServiceDate(routeBean.getId(), new ServiceDate(new Date(SystemTime.currentTimeMillis())));
+				} else {
+					stopsForRoute = _transitDataService.getStopsForRoute(routeBean.getId());
+				}
 
-              // filter out route directions that don't stop at this stop
-              if (!stopGroupBean.getStopIds().contains(_stopId))
-                continue;
+				List<RouteDirection> routeDirections = new ArrayList<RouteDirection>();
+				List<StopGroupingBean> stopGroupings = stopsForRoute.getStopGroupings();
+				for (StopGroupingBean stopGroupingBean : stopGroupings) {
+					for (StopGroupBean stopGroupBean : stopGroupingBean.getStopGroups()) {
+						if (_transitDataService.stopHasRevenueServiceOnRoute((routeBean.getAgency() != null ? routeBean.getAgency().getId() : null),
+								_stopId, routeBean.getId(), stopGroupBean.getId())) {
 
-              Boolean hasUpcomingScheduledService =
-                  _transitDataService.stopHasUpcomingScheduledService((routeBean.getAgency() != null ? routeBean.getAgency().getId() : null), SystemTime.currentTimeMillis(), stop.getId(),
-                      routeBean.getId(), stopGroupBean.getId());
+							NameBean name = stopGroupBean.getName();
+							String type = name.getType();
 
-              // if there are buses on route, always have "scheduled service"
-              Boolean routeHasVehiclesInService = true;
-              //_realtimeService.getVehiclesInServiceForStopAndRoute(stop.getId(), routeBean.getId(), SystemTime.currentTimeMillis());
+							if (!type.equals("destination"))
+								continue;
 
-              if (routeHasVehiclesInService) {
-                hasUpcomingScheduledService = true;
-              }
+							// filter out route directions that don't stop at this stop
+							if (!stopGroupBean.getStopIds().contains(_stopId))
+								continue;
 
-              routeDirections.add(new RouteDirection(stopGroupBean, null, null, hasUpcomingScheduledService));
-            }
-          }
-        }
+							Boolean hasUpcomingScheduledService =
+									_transitDataService.stopHasUpcomingScheduledService((routeBean.getAgency() != null ? routeBean.getAgency().getId() : null), SystemTime.currentTimeMillis(), stop.getId(),
+											routeBean.getId(), stopGroupBean.getId());
 
-        RouteAtStop routeAtStop = new RouteAtStop(routeBean, routeDirections);
-        routesAtStop.add(routeAtStop);
-      }
+							// if there are buses on route, always have "scheduled service"
+							Boolean routeHasVehiclesInService = true;
+							//_realtimeService.getVehiclesInServiceForStopAndRoute(stop.getId(), routeBean.getId(), SystemTime.currentTimeMillis());
 
-      _result = new StopResult(stop, routesAtStop);
+							if (routeHasVehiclesInService) {
+								hasUpcomingScheduledService = true;
+							}
 
-      List<MonitoredStopVisitStructure> visits =
-          _realtimeService.getMonitoredStopVisitsForStop(_stopId, 0, SystemTime.currentTimeMillis());
+							routeDirections.add(new RouteDirection(stopGroupBean, null, null, hasUpcomingScheduledService));
+						}
+					}
+				}
 
-      _response = generateSiriResponse(visits, AgencyAndIdLibrary.convertFromString(_stopId));
+				RouteAtStop routeAtStop = new RouteAtStop(routeBean, routeDirections);
+				routesAtStop.add(routeAtStop);
+			}
 
-      return SUCCESS;
-    } catch (Exception e) {
-      _log.error("Error processing stop for id action: ", e);
-    }
-    return SUCCESS;
-  }   
-  
-  private Siri generateSiriResponse(List<MonitoredStopVisitStructure> visits, AgencyAndId stopId) {
-    
-    List<AgencyAndId> stopIds = new ArrayList<AgencyAndId>();
-    if (stopId != null) stopIds.add(stopId);
-    
-    ServiceDelivery serviceDelivery = new ServiceDelivery();
-    try {
-      StopMonitoringDeliveryStructure stopMonitoringDelivery = new StopMonitoringDeliveryStructure();
-      stopMonitoringDelivery.setResponseTimestamp(new Date(getTime()));
-      
-      Calendar gregorianCalendar = new GregorianCalendar();
-      gregorianCalendar.setTimeInMillis(getTime());
-      gregorianCalendar.add(Calendar.MINUTE, 1);
-      stopMonitoringDelivery.setValidUntil(gregorianCalendar.getTime());
-      
-      stopMonitoringDelivery.getMonitoredStopVisit().addAll(visits);
+			_result = new StopResult(stop, routesAtStop);
 
-      serviceDelivery.setResponseTimestamp(new Date(getTime()));
-      serviceDelivery.getStopMonitoringDelivery().add(stopMonitoringDelivery);
+			List<MonitoredStopVisitStructure> visits =
+					_realtimeService.getMonitoredStopVisitsForStop(_stopId, 0, SystemTime.currentTimeMillis(),locale);
 
-      _serviceAlertsHelper.addSituationExchangeToSiriForStops(serviceDelivery, visits, _transitDataService, stopIds);
-      _serviceAlertsHelper.addGlobalServiceAlertsToServiceDelivery(serviceDelivery, _realtimeService);
-    } catch (RuntimeException e) {
-      throw e;
-    }
+			_response = generateSiriResponse(visits, AgencyAndIdLibrary.convertFromString(_stopId));
 
-    Siri siri = new Siri();
-    siri.setServiceDelivery(serviceDelivery);
-    
-    return siri;
-  }
-  
-  /** 
-   * VIEW METHODS
-   */
-  public String getStopMonitoring() {
-    try {
-      return _realtimeService.getSiriJsonSerializer().getJson(_response, null);
-    } catch(Exception e) {
-      return e.getMessage();
-    }
-  }
-  
-  public String getStopMetadata() throws Exception {
-    return _mapper.writeValueAsString(_result);
-  }
+			return SUCCESS;
+		} catch (Exception e) {
+			_log.error("Error processing stop for id action: ", e);
+		}
+		return SUCCESS;
+	}   
+
+	private Siri generateSiriResponse(List<MonitoredStopVisitStructure> visits, AgencyAndId stopId) {
+
+		List<AgencyAndId> stopIds = new ArrayList<AgencyAndId>();
+		if (stopId != null) stopIds.add(stopId);
+
+		ServiceDelivery serviceDelivery = new ServiceDelivery();
+		try {
+			StopMonitoringDeliveryStructure stopMonitoringDelivery = new StopMonitoringDeliveryStructure();
+			stopMonitoringDelivery.setResponseTimestamp(new Date(getTime()));
+
+			Calendar gregorianCalendar = new GregorianCalendar();
+			gregorianCalendar.setTimeInMillis(getTime());
+			gregorianCalendar.add(Calendar.MINUTE, 1);
+			stopMonitoringDelivery.setValidUntil(gregorianCalendar.getTime());
+
+			stopMonitoringDelivery.getMonitoredStopVisit().addAll(visits);
+
+			serviceDelivery.setResponseTimestamp(new Date(getTime()));
+			serviceDelivery.getStopMonitoringDelivery().add(stopMonitoringDelivery);
+
+			_serviceAlertsHelper.addSituationExchangeToSiriForStops(serviceDelivery, visits, _transitDataService, stopIds);
+			_serviceAlertsHelper.addGlobalServiceAlertsToServiceDelivery(serviceDelivery, _realtimeService);
+		} catch (RuntimeException e) {
+			throw e;
+		}
+
+		Siri siri = new Siri();
+		siri.setServiceDelivery(serviceDelivery);
+
+		return siri;
+	}
+
+	/** 
+	 * VIEW METHODS
+	 */
+	public String getStopMonitoring() {
+		try {
+			return _realtimeService.getSiriJsonSerializer().getJson(_response, null);
+		} catch(Exception e) {
+			return e.getMessage();
+		}
+	}
+
+	public String getStopMetadata() throws Exception {
+		return _mapper.writeValueAsString(_result);
+	}
+
+	@Override
+	public void setServletRequest(HttpServletRequest request) {
+		this._request = request;
+
+	}
 
 }

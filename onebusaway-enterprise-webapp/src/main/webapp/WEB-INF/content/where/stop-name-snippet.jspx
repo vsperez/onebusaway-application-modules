@@ -23,7 +23,7 @@
 	xmlns:oba="/oba-tags">
 <jsp:directive.page contentType="text/html" />
 <s:set var="stop" value="parameters.stop"/>
-<s:text name="Stop"/>
+<s:i18n name='onebusaway-enterprise'><s:text name='stop'></s:text></s:i18n>
 <jsp:text> </jsp:text><s:property value="#stop.code" />
 <s:if test="parameters.excludeStopName">
 </s:if>

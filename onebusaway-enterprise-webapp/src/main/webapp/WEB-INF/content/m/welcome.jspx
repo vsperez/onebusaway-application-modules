@@ -33,13 +33,13 @@
 			<h3 class="noMatches">
 				<s:url var="url" namespace="/m/wiki/Help" action="Index" />
 				<s:if test="%{t=='stops'}">
-					No stops nearby. <a href="${url}">Search Tips...</a>
+					<s:i18n name='onebusaway-enterprise'><s:text name='no.stop.nearby'/></s:i18n>.&#160;<a href="${url}"><s:i18n name='onebusaway-enterprise'><s:text name='search.tips'/></s:i18n></a>
 				</s:if>
 				<s:elseif test="%{t=='routes'}">
-					No routes nearby. <a href="${url}">Search Tips...</a>
+					<s:i18n name='onebusaway-enterprise'><s:text name='no.routes.nearby'/></s:i18n>.&#160;<a href="${url}"><s:i18n name='onebusaway-enterprise'><s:text name='search.tips'/></s:i18n></a>
 				</s:elseif>
 				<s:else>
-					No matches. <a href="${url}">Search Tips...</a>
+					<s:i18n name='onebusaway-enterprise'><s:text name='js.noMatches'/></s:i18n>.&#160;<a href="${url}"><s:i18n name='onebusaway-enterprise'><s:text name='search.tips'/></s:i18n></a>
 				</s:else>
 			</h3>
 		</c:otherwise>
@@ -52,14 +52,15 @@
 <c:choose>
 	<c:when test="${!queryIsEmpty}">
 		<div id="cant-find">
-			<h2>Can't find your bus route?</h2>
+			<h2><s:i18n name='onebusaway-enterprise'><s:text name='cant.find'/></s:i18n></h2>
 			<s:url var="url" namespace="/m/routes" action="index" />
-			<p><s:property value="getText('main.cantfindroute.text')" /> <a href="${url}">Click here</a> to see which routes are currently available.</p>
+			
+			<p><a href="${url}"><s:i18n name='onebusaway-enterprise'><s:text name='click.here'/></s:i18n></a>&#160;<s:i18n name='onebusaway-enterprise'><s:text name='see.available.routes'/></s:i18n></p>
 		</div>
 	</c:when>
 	<c:otherwise>
 		<s:url var="url" namespace="/m/routes" action="index" />
-		<div id="available-routes"><a href="${url}">Click here</a> for a list of available routes.</div>
+		<div id="available-routes"><a href="${url}"><s:i18n name='onebusaway-enterprise'><s:text name='click.here'/></s:i18n></a>&#160; <s:i18n name='onebusaway-enterprise'><s:text name='list.routes'/></s:i18n></div>
 	</c:otherwise>
 </c:choose>
 </html>

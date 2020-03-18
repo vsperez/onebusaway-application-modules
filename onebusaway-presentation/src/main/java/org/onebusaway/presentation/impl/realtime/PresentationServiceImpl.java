@@ -15,6 +15,9 @@
  */
 package org.onebusaway.presentation.impl.realtime;
 
+import java.util.Locale;
+
+
 import javax.annotation.PostConstruct;
 
 import org.onebusaway.container.ConfigurationParameter;
@@ -26,6 +29,7 @@ import org.onebusaway.transit_data_federation.siri.SiriDistanceExtension;
 import org.onebusaway.util.SystemTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Component;
 
 /**
@@ -36,6 +40,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class PresentationServiceImpl implements PresentationService {
 
+  ResourceBundleMessageSource bundle=new ResourceBundleMessageSource();
+ 
   private static Logger _log = LoggerFactory.getLogger(PresentationServiceImpl.class);
   
   private static final String APPROACHING_TEXT = "approaching";
@@ -118,7 +124,11 @@ public class PresentationServiceImpl implements PresentationService {
 
   @PostConstruct
   public void start(){
+	  
     firstLoad = true;
+    bundle.setBasename("org.onebusaway.presentation.bundles.presentation_service");
+    bundle.setDefaultEncoding("UTF-8");
+    //ResourceBundle presentationServiceImpl = ResourceBundle.getBundle("org/onebusaway/presentation/presentation_service",new Locale("en"));
   }
 
   @Override
@@ -163,18 +173,23 @@ public class PresentationServiceImpl implements PresentationService {
 
     return null;
   }
-
   @Override
-  public String getPresentableDistance(SiriDistanceExtension distances) {
-    return getPresentableDistance(distances, APPROACHING_TEXT, ONE_STOP_WORD, MULTIPLE_STOPS_WORD, 
-        ONE_MILE_WORD, MULTIPLE_MILES_WORD, AWAY_WORD);
+  public String getPresentableDistance(SiriDistanceExtension distances,Locale locale) {
+	  Double distanceFromStop = distances.getDistanceFromCall();
+	    Integer numberOfStopsAway = distances.getStopsFromCall();
+	  return getPresentableDistance(distanceFromStop, numberOfStopsAway, locale);
   }
-
-  @Override
-  public String getPresentableDistance(Double distanceFromStop, Integer numberOfStopsAway) {
-    return getPresentableDistance(distanceFromStop, numberOfStopsAway, APPROACHING_TEXT, ONE_STOP_WORD, 
-          MULTIPLE_STOPS_WORD, ONE_MILE_WORD, MULTIPLE_MILES_WORD, AWAY_WORD);
-  }
+//  @Override
+//  public String getPresentableDistance(SiriDistanceExtension distances) {
+//    return getPresentableDistance(distances, APPROACHING_TEXT, ONE_STOP_WORD, MULTIPLE_STOPS_WORD, 
+//        ONE_MILE_WORD, MULTIPLE_MILES_WORD, AWAY_WORD);
+//  }
+//
+//  @Override
+//  public String getPresentableDistance(Double distanceFromStop, Integer numberOfStopsAway) {
+//    return getPresentableDistance(distanceFromStop, numberOfStopsAway, APPROACHING_TEXT, ONE_STOP_WORD, 
+//          MULTIPLE_STOPS_WORD, ONE_MILE_WORD, MULTIPLE_MILES_WORD, AWAY_WORD);
+//  }
 /*  Used by nyc
   @Override
   public String getPresentableDistance(SiriDistanceExtension distances, String approachingText, 
@@ -223,7 +238,71 @@ public class PresentationServiceImpl implements PresentationService {
     return getPresentableDistance(distanceFromStop, numberOfStopsAway, approachingText, oneStopWord, 
         multipleStopsWord, oneMileWord, multipleMilesWord, awayWord);
   }
+  @Override public  String getPresentableDistance(Double distanceFromStop, Integer numberOfStopsAway, Locale locale)
+  {
+	 if(locale!=null)
+	 {
+		 double atStop = _atStopThresholdInFeet;
+		 double atApproaching = _approachingThresholdInFeet;
+		 double asStop= _distanceAsStopsMaximumThresholdInFeet;
+		 
+		 
+		 boolean useMetric=false;
+		 String unit=bundle.getMessage("unit", null, locale);
+		 if(unit!=null && unit.equalsIgnoreCase("metric"))
+			 useMetric=true;
+		 String r = "";
+		 double distAway=distanceFromStop;
+		 if(!useMetric)
+		 {
+	    // meters->feet
+	    	 distAway = distanceFromStop * 3.2808399;
+		 }
+		 else
+		 {
+			 atStop/=3.28084;
+			 atApproaching/=3.28084;
+			 asStop/=3.28084;
+		 }
+			 
+	    
+	    if(distAway < atStop) {
+	      r = bundle.getMessage("atStop", null, locale);
 
+	    } else if(distAway < atApproaching) {
+	      r = bundle.getMessage("approaching", null, locale);
+
+	    } else {
+	      if(distAway <= asStop && 
+	          (numberOfStopsAway <= _distanceAsStopsThresholdInStops 
+	          || distAway <= asStop)) {
+	        
+	        if(numberOfStopsAway == 0)
+	          r =  bundle.getMessage("lessThanOneStopAway", null, locale);
+	        else
+	          r = numberOfStopsAway == 1
+	          ? bundle.getMessage("oneStopAway", new Object[] {numberOfStopsAway}, locale)
+	              : bundle.getMessage("moreThanOneStopAway", new Object[] {numberOfStopsAway}, locale);
+
+	      } else {
+	    	 
+	    	  double distanceAway =distAway/1000.0;//To meters
+	    	  if(!useMetric)
+	    		  distanceAway= (float)distAway / 5280;//To miles
+	    	  r = String.format("%1.1f ", distanceAway);
+	    	 r= bundle.getMessage("distanceAway", new Object[] {r}, locale);
+	      }
+	    }
+
+	    return r;
+	 }
+	 else 
+	 {
+		 return getPresentableDistance(distanceFromStop, numberOfStopsAway, APPROACHING_TEXT, ONE_STOP_WORD, 
+         MULTIPLE_STOPS_WORD, ONE_MILE_WORD, MULTIPLE_MILES_WORD, AWAY_WORD);
+	 }
+	 
+  }
   @Override
   public String getPresentableDistance(Double distanceFromStop, Integer numberOfStopsAway, String approachingText, 
         String oneStopWord, String multipleStopsWord, String oneMileWord, String multipleMilesWord, String awayWord){

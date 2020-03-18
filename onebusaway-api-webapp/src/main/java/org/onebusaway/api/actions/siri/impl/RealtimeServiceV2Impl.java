@@ -21,6 +21,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -147,7 +148,7 @@ public class RealtimeServiceV2Impl implements RealtimeServiceV2 {
   @Override
   public List<VehicleActivityStructure> getVehicleActivityForRoute(
       String routeId, String directionId, int maximumOnwardCalls, DetailLevel detailLevel,
-      long currentTime) {
+      long currentTime,Locale locale) {
     List<VehicleActivityStructure> output = new ArrayList<VehicleActivityStructure>();
 
     ListBean<TripDetailsBean> trips = getAllTripsForRoute(routeId,
@@ -188,7 +189,7 @@ public class RealtimeServiceV2Impl implements RealtimeServiceV2 {
           OnwardCallsMode.VEHICLE_MONITORING, _presentationService,
           _transitDataService, maximumOnwardCalls,
           timePredictionRecords, tripDetails.getStatus().isPredicted(),
-          detailLevel, currentTime, null);
+          detailLevel, currentTime, null,locale);
 
       output.add(activity);
     }
@@ -220,7 +221,7 @@ public class RealtimeServiceV2Impl implements RealtimeServiceV2 {
 
   @Override
   public VehicleActivityStructure getVehicleActivityForVehicle(
-      String vehicleId, int maximumOnwardCalls, DetailLevel detailLevel, long currentTime) {
+      String vehicleId, int maximumOnwardCalls, DetailLevel detailLevel, long currentTime,Locale locale) {
 
     TripForVehicleQueryBean query = new TripForVehicleQueryBean();
     query.setTime(new Date(currentTime));
@@ -257,7 +258,7 @@ public class RealtimeServiceV2Impl implements RealtimeServiceV2 {
           OnwardCallsMode.VEHICLE_MONITORING, _presentationService,
           _transitDataService, maximumOnwardCalls,
           timePredictionRecords, tripDetailsForCurrentTrip.getStatus().isPredicted(),
-          detailLevel,currentTime, null);
+          detailLevel,currentTime, null,locale);
 
       return output;
     }
@@ -268,7 +269,7 @@ public class RealtimeServiceV2Impl implements RealtimeServiceV2 {
   @Override
   public List<MonitoredStopVisitStructure> getMonitoredStopVisitsForStop(
       String stopId, int maximumOnwardCalls, DetailLevel detailLevel, 
-      long currentTime, List<AgencyAndId> routeIds, Map<Filters, String> filters) {
+      long currentTime, List<AgencyAndId> routeIds, Map<Filters, String> filters,Locale locale) {
     List<MonitoredStopVisitStructure> output = new ArrayList<MonitoredStopVisitStructure>();
 
     String directionId = filters.get(Filters.DIRECTION_REF);
@@ -312,7 +313,7 @@ public class RealtimeServiceV2Impl implements RealtimeServiceV2 {
           OnwardCallsMode.STOP_MONITORING, _presentationService,
           _transitDataService, maximumOnwardCalls,
           timePredictionRecords, statusBeanForCurrentTrip.isPredicted(),
-          detailLevel, currentTime, filters);
+          detailLevel, currentTime, filters,locale);
 
       // FILTERS
       AgencyAndId thisRouteId = AgencyAndIdLibrary

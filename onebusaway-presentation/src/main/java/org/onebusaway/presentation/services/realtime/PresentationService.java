@@ -15,6 +15,8 @@
  */
 package org.onebusaway.presentation.services.realtime;
 
+import java.util.Locale;
+
 import org.onebusaway.transit_data.model.ArrivalAndDepartureBean;
 import org.onebusaway.transit_data.model.trips.TripStatusBean;
 import org.onebusaway.transit_data_federation.siri.SiriDistanceExtension;
@@ -33,7 +35,7 @@ public interface PresentationService {
       String approachingText, String oneStopWord, String multipleStopsWord,
       String oneMileWord, String multipleMilesWord, String awayWord);
 
-  public String getPresentableDistance(SiriDistanceExtension distances);
+ // public String getPresentableDistance(SiriDistanceExtension distances);
 
   /* filter logic: */
 
@@ -43,11 +45,15 @@ public interface PresentationService {
   // for stops and vehicles
   boolean include(ArrivalAndDepartureBean adBean, TripStatusBean status);
 
-  public String getPresentableDistance(Double distanceFromStop, Integer numberOfStopsAway);
+ // public String getPresentableDistance(Double distanceFromStop, Integer numberOfStopsAway);
 
   public String getPresentableDistance(Double distanceFromStop,
       Integer numberOfStopsAway, String approachingText, String oneStopWord,
       String multipleStopsWord, String oneMileWord, String multipleMilesWord,
       String awayWord);
+
+  public String getPresentableDistance(Double distanceFromStop, Integer numberOfStopsAway, Locale locale);
+
+  public String getPresentableDistance(SiriDistanceExtension distances, Locale locale);
 
 }

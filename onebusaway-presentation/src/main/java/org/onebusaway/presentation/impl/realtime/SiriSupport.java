@@ -24,6 +24,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -90,7 +91,7 @@ public final class SiriSupport {
 	public static void fillMonitoredVehicleJourney(MonitoredVehicleJourneyStructure monitoredVehicleJourney, 
 			TripBean framedJourneyTripBean, TripStatusBean currentVehicleTripStatus, StopBean monitoredCallStopBean, OnwardCallsMode onwardCallsMode,
 			PresentationService presentationService, TransitDataService transitDataService,
-			int maximumOnwardCalls, List<TimepointPredictionRecord> stopLevelPredictions, boolean hasRealtimeData, long responseTimestamp, boolean showRawLocation) {
+			int maximumOnwardCalls, List<TimepointPredictionRecord> stopLevelPredictions, boolean hasRealtimeData, long responseTimestamp, boolean showRawLocation,Locale locale) {
 
 		BlockInstanceBean blockInstance = 
 				transitDataService.getBlockInstance(currentVehicleTripStatus.getActiveTrip().getBlockId(), currentVehicleTripStatus.getServiceDate());
@@ -281,12 +282,12 @@ public final class SiriSupport {
 		// monitored call
 		if(!presentationService.isOnDetour(currentVehicleTripStatus))
 			fillMonitoredCall(monitoredVehicleJourney, blockInstance, currentVehicleTripStatus, monitoredCallStopBean, 
-				presentationService, transitDataService, stopIdToPredictionRecordMap, hasRealtimeData, responseTimestamp);
+				presentationService, transitDataService, stopIdToPredictionRecordMap, hasRealtimeData, responseTimestamp,locale);
 
 		// onward calls
 		if(!presentationService.isOnDetour(currentVehicleTripStatus))
 			fillOnwardCalls(monitoredVehicleJourney, blockInstance, framedJourneyTripBean, currentVehicleTripStatus, onwardCallsMode,
-				presentationService, transitDataService, stopIdToPredictionRecordMap, maximumOnwardCalls, hasRealtimeData, responseTimestamp);
+				presentationService, transitDataService, stopIdToPredictionRecordMap, maximumOnwardCalls, hasRealtimeData, responseTimestamp,locale);
 
 		// situations
 		fillSituations(monitoredVehicleJourney, currentVehicleTripStatus);
@@ -328,7 +329,7 @@ public final class SiriSupport {
 	private static void fillOnwardCalls(MonitoredVehicleJourneyStructure monitoredVehicleJourney, 
 			BlockInstanceBean blockInstance, TripBean framedJourneyTripBean, TripStatusBean currentVehicleTripStatus, OnwardCallsMode onwardCallsMode,
 			PresentationService presentationService, TransitDataService transitDataService, 
-			Map<String, TimepointPredictionRecord> stopLevelPredictions, int maximumOnwardCalls, boolean hasRealtimeData, long responseTimestamp) {
+			Map<String, TimepointPredictionRecord> stopLevelPredictions, int maximumOnwardCalls, boolean hasRealtimeData, long responseTimestamp,Locale locale) {
 
 		String tripIdOfMonitoredCall = framedJourneyTripBean.getId();
 
@@ -430,7 +431,7 @@ public final class SiriSupport {
 						hasRealtimeData, responseTimestamp,
 						getScheduledArrivalTime(currentVehicleTripStatus, stopTime),
 						getScheduledDepartureTime(currentVehicleTripStatus, stopTime),
-						currentVehicleTripStatus.getScheduleDeviation());
+						currentVehicleTripStatus.getScheduleDeviation(),locale);
 
 				if (ocs != null)
 					monitoredVehicleJourney.getOnwardCalls().getOnwardCall().add(ocs);
@@ -452,7 +453,7 @@ public final class SiriSupport {
 	private static void fillMonitoredCall(MonitoredVehicleJourneyStructure monitoredVehicleJourney, 
 			BlockInstanceBean blockInstance, TripStatusBean tripStatus, StopBean monitoredCallStopBean, 
 			PresentationService presentationService, TransitDataService transitDataService,
-			Map<String, TimepointPredictionRecord> stopLevelPredictions, boolean hasRealtimeData, long responseTimestamp) {
+			Map<String, TimepointPredictionRecord> stopLevelPredictions, boolean hasRealtimeData, long responseTimestamp,Locale locale) {
 
 		List<BlockTripBean> blockTrips = blockInstance.getBlockConfiguration().getTrips();
 		
@@ -520,7 +521,7 @@ public final class SiriSupport {
 								responseTimestamp,
 								getScheduledArrivalTime(tripStatus, stopTime),
 								getScheduledDepartureTime(tripStatus, stopTime),
-								tripStatus.getScheduleDeviation());
+								tripStatus.getScheduleDeviation(),locale);
 							if(msc != null)
 								monitoredVehicleJourney.setMonitoredCall(msc);
 					}
@@ -560,7 +561,7 @@ public final class SiriSupport {
 			PresentationService presentationService, 
 			double distanceOfCallAlongTrip, double distanceOfVehicleFromCall, int visitNumber, int index,
 			TimepointPredictionRecord prediction, boolean hasRealtimeData, long responseTimestamp,
-		    long scheduledArrivalTime, long scheduledDepartureTime, double scheduleDeviation) {
+		    long scheduledArrivalTime, long scheduledDepartureTime, double scheduleDeviation,Locale locale) {
 
 		boolean hasPrediction = prediction != null;
 		Long predictedArrivalTime = null;
@@ -624,7 +625,7 @@ public final class SiriSupport {
 		distances.setStopsFromCall(index);
 		distances.setCallDistanceAlongRoute(NumberUtils.toDouble(df.format(distanceOfCallAlongTrip)));
 		distances.setDistanceFromCall(NumberUtils.toDouble(df.format(distanceOfVehicleFromCall)));
-		distances.setPresentableDistance(presentationService.getPresentableDistance(distances));
+		distances.setPresentableDistance(presentationService.getPresentableDistance(distances,locale));
 
 		wrapper.setDistances(distances);
 		distancesExtensions.setAny(wrapper);    
@@ -637,7 +638,7 @@ public final class SiriSupport {
 			PresentationService presentationService, 
 			double distanceOfCallAlongTrip, double distanceOfVehicleFromCall, int visitNumber, int index,
 			TimepointPredictionRecord prediction, boolean hasRealtimeData, long responseTimestamp,
-			long scheduledArrivalTime, long scheduledDepartureTime, double scheduleDeviation) {
+			long scheduledArrivalTime, long scheduledDepartureTime, double scheduleDeviation,Locale locale) {
 
 		boolean hasPrediction = prediction != null;
 		Long predictedArrivalTime = null;
@@ -694,7 +695,7 @@ public final class SiriSupport {
 		distances.setStopsFromCall(index);
 		distances.setCallDistanceAlongRoute(NumberUtils.toDouble(df.format(distanceOfCallAlongTrip)));
 		distances.setDistanceFromCall(NumberUtils.toDouble(df.format(distanceOfVehicleFromCall)));		
-		distances.setPresentableDistance(presentationService.getPresentableDistance(distances));
+		distances.setPresentableDistance(presentationService.getPresentableDistance(distances,locale));
 
         long deviation = 0L;
         if (monitoredCallStructure.getExpectedArrivalTime() != null &&

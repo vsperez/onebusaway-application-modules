@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -103,7 +104,7 @@ public class StopMonitoringAction extends ApiActionSupport
   public DefaultHttpHeaders index() throws IOException {
 	
 	processGoogleAnalytics();
-
+	Locale locale=_request.getLocale();
   	long responseTimestamp = getTime();
 
     _realtimeService.setTime(responseTimestamp);
@@ -219,7 +220,7 @@ public class StopMonitoringAction extends ApiActionSupport
       if (!stopId.hasValues()) continue;
       
       // Stop ids can only be valid here because we only added valid ones to stopIds.
-      List<MonitoredStopVisitStructure> visitsForStop = _realtimeService.getMonitoredStopVisitsForStop(stopId.toString(), maximumOnwardCalls, responseTimestamp);
+      List<MonitoredStopVisitStructure> visitsForStop = _realtimeService.getMonitoredStopVisitsForStop(stopId.toString(), maximumOnwardCalls, responseTimestamp,locale);
       if (visitsForStop != null) visits.addAll(visitsForStop); 
     }
     

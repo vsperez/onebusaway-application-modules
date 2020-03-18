@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -76,7 +77,7 @@ public class SearchResultFactoryImpl extends AbstractSearchResultFactoryImpl imp
   }
 
   @Override
-  public SearchResult getRouteResult(RouteBean routeBean) {
+  public SearchResult getRouteResult(RouteBean routeBean,Locale locale) {
     List<RouteDirection> directions = new ArrayList<RouteDirection>();
 
       ServiceDate serviceDate = null;
@@ -98,7 +99,7 @@ public class SearchResultFactoryImpl extends AbstractSearchResultFactoryImpl imp
     // add stops in both directions
     
     List<VehicleActivityStructure> journeyList = _realtimeService.getVehicleActivityForRoute(
-        routeBean.getId(), null, 0, SystemTime.currentTimeMillis(), false);
+        routeBean.getId(), null, 0, SystemTime.currentTimeMillis(), false,locale);
 
     Map<String, List<String>> stopIdToDistanceAwayStringMap = new HashMap<String, List<String>>();
     Map<String, List<String>> stopIdToVehicleIdMap = new HashMap<String, List<String>>();
@@ -180,7 +181,7 @@ public class SearchResultFactoryImpl extends AbstractSearchResultFactoryImpl imp
   }
 
   @Override
-  public SearchResult getStopResult(StopBean stopBean, Set<RouteBean> routeFilter) {
+  public SearchResult getStopResult(StopBean stopBean, Set<RouteBean> routeFilter,Locale locale) {
     List<RouteAtStop> routesWithArrivals = new ArrayList<RouteAtStop>();
     List<RouteAtStop> routesWithNoVehiclesEnRoute = new ArrayList<RouteAtStop>();
     List<RouteAtStop> routesWithNoScheduledService = new ArrayList<RouteAtStop>();
@@ -223,7 +224,7 @@ public class SearchResultFactoryImpl extends AbstractSearchResultFactoryImpl imp
 
           // arrivals in this direction
           Map<String, List<StopOnRoute>> arrivalsForRouteAndDirection = getDisplayStringsByHeadsignForStopAndRouteAndDirection(
-              stopBean, routeBean, stopGroupBean);
+              stopBean, routeBean, stopGroupBean,locale);
 
           // service alerts for this route + direction
           List<ServiceAlertBean> serviceAlertBeans = _realtimeService.getServiceAlertsForRouteAndDirection(
@@ -294,19 +295,19 @@ public class SearchResultFactoryImpl extends AbstractSearchResultFactoryImpl imp
     }
 
   @Override
-  public SearchResult getGeocoderResult(EnterpriseGeocoderResult geocodeResult, Set<RouteBean> routeFilter) {
+  public SearchResult getGeocoderResult(EnterpriseGeocoderResult geocodeResult, Set<RouteBean> routeFilter,Locale locale) {
     return new GeocodeResult(geocodeResult);
   }
 
   // stop view
   private Map<String, List<StopOnRoute>> getDisplayStringsByHeadsignForStopAndRouteAndDirection(
-      StopBean stopBean, RouteBean routeBean, StopGroupBean stopGroupBean) {
+      StopBean stopBean, RouteBean routeBean, StopGroupBean stopGroupBean,Locale locale) {
     
     Map<String, List<StopOnRoute>> results = new HashMap<String, List<StopOnRoute>>();
 
     // stop visits
     List<MonitoredStopVisitStructure> visitList = _realtimeService.getMonitoredStopVisitsForStop(
-        stopBean.getId(), 0, SystemTime.currentTimeMillis());
+        stopBean.getId(), 0, SystemTime.currentTimeMillis(),locale);
 
     for (MonitoredStopVisitStructure visit : visitList) {
       String routeId = visit.getMonitoredVehicleJourney().getLineRef().getValue();

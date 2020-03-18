@@ -186,7 +186,7 @@
 			<c:import url="includes/welcome.jspx" />
 		   
 			<s:url var="url" namespace="/routes" action="index"/>
-			<div id="available-routes"><a href="${url}">Click here</a> for a list of available routes.</div>
+			<div id="available-routes"><a href="${url}">Click here_1_</a> for a list of available routes.</div>
 		   
 			<div id="cant-find">
 				<h2>Can't find your bus route?</h2>

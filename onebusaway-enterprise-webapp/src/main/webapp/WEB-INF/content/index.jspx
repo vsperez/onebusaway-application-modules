@@ -89,7 +89,11 @@ dictionary.set('js.viewSchedule',"<s:i18n name='onebusaway-enterprise'><s:text n
 dictionary.set('js.centerZoom',"<s:i18n name='onebusaway-enterprise'><s:text name='js.centerZoom'/></s:i18n>");
 dictionary.set('js.to',"<s:i18n name='onebusaway-enterprise'><s:text name='js.to'/></s:i18n>");
 dictionary.set('js.noMatches',"<s:i18n name='onebusaway-enterprise'><s:text name='js.noMatches'/></s:i18n>");
-
+dictionary.set('nearby.stops',"<s:i18n name='onebusaway-enterprise'><s:text name='nearby.stops'/></s:i18n>");
+dictionary.set('nearby.routes',"<s:i18n name='onebusaway-enterprise'><s:text name='nearby.routes'/></s:i18n>");
+dictionary.set('searching',"<s:i18n name='onebusaway-enterprise'><s:text name='searching'/></s:i18n>");
+dictionary.set('searching.location',"<s:i18n name='onebusaway-enterprise'><s:text name='searching.location'/></s:i18n>");
+dictionary.set('schedule.data',"<s:i18n name='onebusaway-enterprise'><s:text name='schedule.data'/></s:i18n>");
 
 
 

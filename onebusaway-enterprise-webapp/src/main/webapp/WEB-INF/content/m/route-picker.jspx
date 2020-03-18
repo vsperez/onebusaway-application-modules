@@ -20,7 +20,8 @@
 	xmlns:wiki="/oba-wiki-tags">
 
 	<h3>
-			<s:property value="getText(nearby.routes)" />:
+	<s:i18n name='onebusaway-enterprise'><s:text name='nearby.routes'/></s:i18n>
+			
 	</h3>
 		
 	<div class="routeList">

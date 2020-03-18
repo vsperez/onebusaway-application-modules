@@ -65,13 +65,13 @@
 	<div id="footer">
     	<p>
 			<s:url var="mobileHelpUrl" namespace="/m/wiki" action="Help/Index"/>	
-    		<a href="${mobileHelpUrl}">Help</a> | 
+    		<a href="${mobileHelpUrl}"><s:i18n name='onebusaway-enterprise'><s:text name='link.help'/></s:i18n></a> | 
     		
     		<s:url var="desktopUrl" namespace="/" action="index"/>	
-    		<a href="${desktopUrl}">Desktop Site</a> |
+    		<a href="${desktopUrl}"><s:i18n name='onebusaway-enterprise'><s:text name='link.desktop'/></s:i18n></a> |
     		
     		<s:url var="contactUrl" namespace="/wiki" action="ContactUs"/>
-    		<a href="${contactUrl}">Contact</a> |
+    		<a href="${contactUrl}"><s:i18n name='onebusaway-enterprise'><s:text name='link.contact'/></s:i18n></a> |
 
 			<s:set var="link" value="getText('main.agencysite.link')" />
 			<a href="${link}"><s:property value="getText('mobile.agency.name')" /></a>

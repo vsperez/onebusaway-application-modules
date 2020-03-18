@@ -100,7 +100,7 @@ public class VehicleMonitoringActionTest extends VehicleMonitoringAction {
     when(servletResponse.getWriter()).thenReturn(nothingPrintWriter);
     
     List<VehicleActivityStructure> vehicleActivities = new ArrayList<VehicleActivityStructure>();
-    when(realtimeService.getVehicleActivityForRoute(eq("40_100479"), anyString(), eq(0), anyLong(), eq(false))).thenReturn(vehicleActivities);
+    when(realtimeService.getVehicleActivityForRoute(eq("40_100479"), anyString(), eq(0), anyLong(), eq(false),null)).thenReturn(vehicleActivities);
     
     VehicleActivityStructure vehicleActivity = new VehicleActivityStructure();
     vehicleActivities.add(vehicleActivity);
@@ -157,7 +157,7 @@ public class VehicleMonitoringActionTest extends VehicleMonitoringAction {
     when(servletResponse.getWriter()).thenReturn(nothingPrintWriter);
     
     List<VehicleActivityStructure> vehicleActivities = new ArrayList<VehicleActivityStructure>();
-    when(realtimeService.getVehicleActivityForRoute(eq("40_100479"), anyString(), eq(0), anyLong(), eq(false))).thenReturn(vehicleActivities);
+    when(realtimeService.getVehicleActivityForRoute(eq("40_100479"), anyString(), eq(0), anyLong(), eq(false),null)).thenReturn(vehicleActivities);
     
     ServiceAlertBean serviceAlertBean = ServiceAlertsTestSupport.createServiceAlertBean("1_1");
     when(transitDataService.getServiceAlertForId(anyString())).thenReturn(serviceAlertBean );

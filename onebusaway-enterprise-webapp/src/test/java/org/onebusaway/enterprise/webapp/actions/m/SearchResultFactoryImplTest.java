@@ -239,7 +239,7 @@ public class SearchResultFactoryImplTest {
     when(monCall.getExtensions()).thenReturn(extensions );
     when(monVehJourney.getMonitoredCall()).thenReturn(monCall );
     
-    when(_realtimeService.getMonitoredStopVisitsForStop(eq(TEST_STOP_ID), eq(0), anyLong())).thenReturn(monitoredStopVisits );
+    when(_realtimeService.getMonitoredStopVisitsForStop(eq(TEST_STOP_ID), eq(0), anyLong(),null)).thenReturn(monitoredStopVisits );
 
     when(_transitDataService.getStopsForRoute(anyString())).thenReturn(
         stopsForRouteBean);
@@ -248,7 +248,7 @@ public class SearchResultFactoryImplTest {
     SearchResultFactoryImpl srf = new SearchResultFactoryImpl(
         _transitDataService, _realtimeService, _configurationService);
     Set<RouteBean> routeFilter = new HashSet<RouteBean>();
-    StopResult result = (StopResult) srf.getStopResult(stopBean, routeFilter);
+    StopResult result = (StopResult) srf.getStopResult(stopBean, routeFilter,null);
     return result;
   }
 
@@ -260,7 +260,7 @@ public class SearchResultFactoryImplTest {
         serviceAlerts);
     SearchResultFactoryImpl srf = new SearchResultFactoryImpl(
         _transitDataService, _realtimeService, _configurationService);
-    RouteResult result = (RouteResult) srf.getRouteResult(createRouteBean());
+    RouteResult result = (RouteResult) srf.getRouteResult(createRouteBean(),null);
     return result;
   }
 

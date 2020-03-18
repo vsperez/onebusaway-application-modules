@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -96,7 +97,7 @@ public class VehicleMonitoringV2Action extends MonitoringActionBase
     _realtimeService.setTime(currentTimestamp);
     
     String detailLevelParam = _request.getParameter(VEHICLE_MONITORING_DETAIL_LEVEL);
-  
+    Locale locale=_request.getLocale();
   //get the detail level parameter or set it to default if not specified
     DetailLevel detailLevel;
     
@@ -149,7 +150,7 @@ public class VehicleMonitoringV2Action extends MonitoringActionBase
       try{
         for (AgencyAndId vehicleId : vehicleIds) {
           VehicleActivityStructure activity = _realtimeService.getVehicleActivityForVehicle(
-              vehicleId.toString(), maximumOnwardCalls, detailLevel, currentTimestamp);
+              vehicleId.toString(), maximumOnwardCalls, detailLevel, currentTimestamp,locale);
   
           if (activity != null) {
             activities.add(activity);
@@ -173,7 +174,7 @@ public class VehicleMonitoringV2Action extends MonitoringActionBase
       for (AgencyAndId routeId : routeIds) {
         
         List<VehicleActivityStructure> activitiesForRoute = _realtimeService.getVehicleActivityForRoute(
-            routeId.toString(), directionId, maximumOnwardCalls, detailLevel, currentTimestamp);
+            routeId.toString(), directionId, maximumOnwardCalls, detailLevel, currentTimestamp,locale);
         if (activitiesForRoute != null) {
           activities.addAll(activitiesForRoute);
         }
@@ -218,7 +219,7 @@ public class VehicleMonitoringV2Action extends MonitoringActionBase
 
           for (VehicleStatusBean v : vehicles.getList()) {
             VehicleActivityStructure activity = _realtimeService.getVehicleActivityForVehicle(
-                v.getVehicleId(), maximumOnwardCalls, detailLevel, currentTimestamp);
+                v.getVehicleId(), maximumOnwardCalls, detailLevel, currentTimestamp,locale);
 
             if (activity != null) {
               activities.add(activity);

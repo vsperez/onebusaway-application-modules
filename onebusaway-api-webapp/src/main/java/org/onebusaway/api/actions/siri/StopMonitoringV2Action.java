@@ -21,6 +21,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -85,7 +86,7 @@ public class StopMonitoringV2Action  extends MonitoringActionBase
     //_monitoringActionSupport.setupGoogleAnalytics(_request,
     //   _configurationService);
     processGoogleAnalytics();
-
+    Locale locale=_request.getLocale();
     _realtimeService.setTime(responseTimestamp);
     String detailLevelParam = _request.getParameter(STOP_MONITORING_DETAIL_LEVEL);
     
@@ -162,7 +163,7 @@ public class StopMonitoringV2Action  extends MonitoringActionBase
       // to stopIds.
       List<MonitoredStopVisitStructure> visitsForStop = _realtimeService
           .getMonitoredStopVisitsForStop(stopId.toString(),
-              maximumOnwardCalls, detailLevel, responseTimestamp, routeIds, filters);
+              maximumOnwardCalls, detailLevel, responseTimestamp, routeIds, filters,locale);
       if (visitsForStop != null)
         visits.addAll(visitsForStop);
     }

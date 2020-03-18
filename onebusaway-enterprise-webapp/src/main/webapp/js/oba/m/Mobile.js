@@ -122,9 +122,9 @@ OBA.Mobile = (function() {
 			.addClass("nearby-button").appendTo(splitButton);
 		
 		nearbyStopsBtn.append(jQuery("<div></div>").attr("id", "nearby-stops-button-icon")
-				.append(jQuery("<span></span>").addClass("nearby-text").text("Nearby Stops")));
+				.append(jQuery("<span></span>").addClass("nearby-text").text(getValueFor('nearby.stops'))));
 		nearbyRoutesBtn.append(jQuery("<div></div>").attr("id", "nearby-routes-button-icon")
-				.append(jQuery("<span></span>").addClass("nearby-text").text("Nearby Routes")));
+				.append(jQuery("<span></span>").addClass("nearby-text").text(getValueFor('nearby.routes'))));
 		
 		searchPanelForm.before(splitButton);
 				
@@ -153,11 +153,11 @@ OBA.Mobile = (function() {
 		// show "finding location" message button to user while 
 		// location is being found
 		jQuery("#submitButton").addClass("loading");
-		jQuery(".q").attr("placeholder", "Finding your location...");
+		jQuery(".q").attr("placeholder", getValueFor('searching.location'));
 
 		navigator.geolocation.getCurrentPosition(function(location) {
 			
-			jQuery(".q").attr("placeholder", "Searching...");
+			jQuery(".q").attr("placeholder",getValueFor('searching'));
 
 			// update search field
 			if(locationField !== null) {

@@ -21,6 +21,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -111,7 +112,7 @@ public class VehicleMonitoringAction extends ApiActionSupport
   public String index() {
 
 	processGoogleAnalytics();
-
+	Locale locale=_request.getLocale();
     long currentTimestamp = getTime();
     
     _realtimeService.setTime(currentTimestamp);
@@ -196,7 +197,7 @@ public class VehicleMonitoringAction extends ApiActionSupport
       
       for (AgencyAndId vehicleId : vehicleIds) {
         VehicleActivityStructure activity = _realtimeService.getVehicleActivityForVehicle(
-            vehicleId.toString(), maximumOnwardCalls, currentTimestamp, tripId);
+            vehicleId.toString(), maximumOnwardCalls, currentTimestamp, tripId,locale);
 
         if (activity != null) {
           activities.add(activity);
@@ -213,7 +214,7 @@ public class VehicleMonitoringAction extends ApiActionSupport
       for (AgencyAndId routeId : routeIds) {
 
         List<VehicleActivityStructure> activitiesForRoute = _realtimeService.getVehicleActivityForRoute(
-            routeId.toString(), directionId, maximumOnwardCalls, currentTimestamp, showRawLocation);
+            routeId.toString(), directionId, maximumOnwardCalls, currentTimestamp, showRawLocation,locale);
         if (activitiesForRoute != null) {
           activities.addAll(activitiesForRoute);
         }
@@ -256,7 +257,7 @@ public class VehicleMonitoringAction extends ApiActionSupport
 
           for (VehicleStatusBean v : vehicles.getList()) {
             VehicleActivityStructure activity = _realtimeService.getVehicleActivityForVehicle(
-                v.getVehicleId(), maximumOnwardCalls, currentTimestamp, tripId);
+                v.getVehicleId(), maximumOnwardCalls, currentTimestamp, tripId,locale);
 
             if (activity != null) {
               activities.add(activity);

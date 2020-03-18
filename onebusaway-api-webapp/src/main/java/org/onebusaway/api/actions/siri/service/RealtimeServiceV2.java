@@ -16,6 +16,7 @@
 package org.onebusaway.api.actions.siri.service;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.onebusaway.api.actions.siri.impl.SiriSupportV2.Filters;
@@ -47,16 +48,16 @@ public interface RealtimeServiceV2 {
 
   public VehicleActivityStructure getVehicleActivityForVehicle(
       String vehicleId, int maximumOnwardCalls, DetailLevel detailLevel, 
-      long currentTime);
+      long currentTime,Locale locale);
 
   public List<VehicleActivityStructure> getVehicleActivityForRoute(
       String routeId, String directionId, int maximumOnwardCalls,
-      DetailLevel detailLevel, long currentTime);
+      DetailLevel detailLevel, long currentTime,Locale locale);
 
   public List<MonitoredStopVisitStructure> getMonitoredStopVisitsForStop(
       String stopId, int maximumOnwardCalls, DetailLevel detailLevel,
       long currentTime, List<AgencyAndId> routeIds,
-      Map<Filters, String> filters);
+      Map<Filters, String> filters,Locale locale);
 
   public boolean getVehiclesInServiceForRoute(String routeId,
       String directionId, long currentTime);

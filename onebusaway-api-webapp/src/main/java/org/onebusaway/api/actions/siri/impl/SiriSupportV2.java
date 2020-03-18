@@ -21,6 +21,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -116,7 +117,7 @@ public final class SiriSupportV2 {
       List<TimepointPredictionRecord> stopLevelPredictions,
       boolean hasRealtimeData,
       DetailLevel detailLevel,
-      long responseTimestamp, Map<Filters, String> filters) {
+      long responseTimestamp, Map<Filters, String> filters,Locale locale) {
     BlockInstanceBean blockInstance = transitDataService
         .getBlockInstance(currentVehicleTripStatus.getActiveTrip()
             .getBlockId(), currentVehicleTripStatus
@@ -312,7 +313,7 @@ public final class SiriSupportV2 {
           currentVehicleTripStatus, monitoredCallStopBean,
           presentationService, transitDataService,
           stopIdToPredictionRecordMap, hasRealtimeData, detailLevel,
-          responseTimestamp);
+          responseTimestamp,locale);
     
     
     // detail level - minimal
@@ -368,7 +369,7 @@ public final class SiriSupportV2 {
             framedJourneyTripBean, currentVehicleTripStatus,
             onwardCallsMode, presentationService,
             transitDataService, stopIdToPredictionRecordMap,
-            maximumOnwardCalls, responseTimestamp);
+            maximumOnwardCalls, responseTimestamp,locale);
     }
     
 
@@ -646,7 +647,7 @@ public final class SiriSupportV2 {
       PresentationService presentationService,
       TransitDataService transitDataService,
       Map<String, TimepointPredictionRecord> stopLevelPredictions,
-      int maximumOnwardCalls, long responseTimestamp) {
+      int maximumOnwardCalls, long responseTimestamp,Locale locale) {
 
     String tripIdOfMonitoredCall = framedJourneyTripBean.getId();
 
@@ -732,7 +733,7 @@ public final class SiriSupportV2 {
                 - distanceOfVehicleAlongBlock,
             visitNumber, blockTripStopsAfterTheVehicle - 1,
             stopLevelPredictions.get(stopTime.getStopTime()
-                .getStop().getId()), responseTimestamp);
+                .getStop().getId()), responseTimestamp,locale);
         if (ocs != null) {
           monitoredVehicleJourney
               .getOnwardCalls()
@@ -764,7 +765,7 @@ public final class SiriSupportV2 {
       Map<String, TimepointPredictionRecord> stopLevelPredictions,
       boolean hasRealtimeData,
       DetailLevel detailLevel,
-      long responseTimestamp) {
+      long responseTimestamp,Locale locale) {
 
     List<BlockTripBean> blockTrips = blockInstance.getBlockConfiguration()
         .getTrips();
@@ -843,7 +844,7 @@ public final class SiriSupportV2 {
                 blockTripStopsAfterTheVehicle - 1,
                 stopLevelPredictions.get(stopTime
                     .getStopTime().getStop()
-                    .getId()), detailLevel, responseTimestamp);
+                    .getId()), detailLevel, responseTimestamp,locale);
             if (mcs != null) {
               monitoredVehicleJourney
                   .setMonitoredCall(mcs);
@@ -882,7 +883,7 @@ public final class SiriSupportV2 {
       StopBean stopBean, PresentationService presentationService,
       double distanceOfCallAlongTrip, double distanceOfVehicleFromCall,
       int visitNumber, int index, TimepointPredictionRecord prediction,
-      long responseTimestamp) {
+      long responseTimestamp,Locale locale) {
 
     OnwardCallStructure onwardCallStructure = new OnwardCallStructure();
     onwardCallStructure.setVisitNumber(BigInteger.valueOf(visitNumber));
@@ -919,7 +920,7 @@ public final class SiriSupportV2 {
     // Distances
     NaturalLanguageStringStructure presentableDistance = new NaturalLanguageStringStructure();
     presentableDistance.setValue(presentationService
-        .getPresentableDistance(distanceOfVehicleFromCall, index));
+        .getPresentableDistance(distanceOfVehicleFromCall, index,locale));
     
     onwardCallStructure.setNumberOfStopsAway(BigInteger.valueOf(index));
     onwardCallStructure.setDistanceFromStop(new BigDecimal(distanceOfVehicleFromCall).toBigInteger());
@@ -949,7 +950,7 @@ public final class SiriSupportV2 {
       StopBean stopBean, PresentationService presentationService,
       double distanceOfCallAlongTrip, double distanceOfVehicleFromCall,
       int visitNumber, int index, TimepointPredictionRecord prediction,
-      DetailLevel detailLevel, long responseTimestamp) {
+      DetailLevel detailLevel, long responseTimestamp,Locale locale) {
 
     if (prediction.getScheduleRelationship() != null && prediction.isSkipped()) {
       _log.info("SKIPPED STOP: " + stopBean.getId());
@@ -1010,7 +1011,7 @@ public final class SiriSupportV2 {
  
     // distances
     NaturalLanguageStringStructure presentableDistance = new NaturalLanguageStringStructure();
-    presentableDistance.setValue(presentationService.getPresentableDistance(distanceOfVehicleFromCall, index));
+    presentableDistance.setValue(presentationService.getPresentableDistance(distanceOfVehicleFromCall, index,locale));
     
     monitoredCallStructure.setNumberOfStopsAway(BigInteger.valueOf(index));
     monitoredCallStructure.setDistanceFromStop(new BigDecimal(distanceOfVehicleFromCall).toBigInteger());

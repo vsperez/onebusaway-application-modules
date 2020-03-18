@@ -605,7 +605,7 @@ OBA.Popups = (function() {
 						
 						// Alert if Realtime data is unavailable
 						if(typeof hasRealtime === 'undefined' || hasRealtime === null || hasRealtime == false){
-							distance += '<span class="scheduleAlert"><span class="not_bold"> (using schedule time)</span></span>';
+							distance += '<span class="scheduleAlert"><span class="not_bold"> ('+getValueFor('schedule.data')+')</span></span>';
 							arrival = 'arrival_schedule arrival_schedule_' + vehicleType;
 						}
 						// If realtime data is available and config is set, add vehicleID

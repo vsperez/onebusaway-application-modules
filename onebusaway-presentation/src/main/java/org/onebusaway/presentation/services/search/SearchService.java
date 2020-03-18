@@ -16,6 +16,7 @@
 package org.onebusaway.presentation.services.search;
 
 import org.onebusaway.gtfs.model.calendar.ServiceDate;
+import java.util.Locale;
 import org.onebusaway.presentation.model.SearchResultCollection;
 import org.onebusaway.geospatial.model.CoordinateBounds;
 import org.onebusaway.transit_data.model.RouteBean;
@@ -24,14 +25,20 @@ import java.util.Set;
 
 public interface SearchService {
 
-  public SearchResultCollection getSearchResults(String query, SearchResultFactory resultFactory);
+  public SearchResultCollection getSearchResults(String query, SearchResultFactory resultFactory,Locale locale);
 
-  public SearchResultCollection getSearchResultsForServiceDate(String query, SearchResultFactory resultFactory, ServiceDate serviceDate);
+  public SearchResultCollection getSearchResultsForServiceDate(String query, SearchResultFactory resultFactory, ServiceDate serviceDate,Locale locale);
 
-  public SearchResultCollection findRoutesStoppingNearPoint(Double latitude, Double longitude, SearchResultFactory resultFactory);
+  public SearchResultCollection findRoutesStoppingNearPoint(Double latitude, Double longitude, SearchResultFactory resultFactory,Locale locale);
 
   public SearchResultCollection findRoutesStoppingWithinRegion(CoordinateBounds bounds, SearchResultFactory resultFactory);
 
-  public SearchResultCollection findStopsNearPoint(Double latitude, Double longitude, SearchResultFactory resultFactory, Set<RouteBean> routeFilter);
+  public SearchResultCollection findStopsNearPoint(Double latitude, Double longitude, SearchResultFactory resultFactory, Set<RouteBean> routeFilter,Locale locale);
+
+
+
+
+
+
 
 }

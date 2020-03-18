@@ -16,6 +16,7 @@
 package org.onebusaway.presentation.services.realtime;
 
 import java.util.List;
+import java.util.Locale;
 
 import org.onebusaway.transit_data_federation.siri.SiriJsonSerializer;
 import org.onebusaway.transit_data_federation.siri.SiriXmlSerializer;
@@ -37,13 +38,13 @@ public interface RealtimeService {
   
   
   public VehicleActivityStructure getVehicleActivityForVehicle(String vehicleId, 
-      int maximumOnwardCalls, long currentTime, String tripId);
+      int maximumOnwardCalls, long currentTime, String tripId,Locale locale);
 
   public List<VehicleActivityStructure> getVehicleActivityForRoute(String routeId, 
-	      String directionId, int maximumOnwardCalls, long currentTime, boolean showRawLocation);
+	      String directionId, int maximumOnwardCalls, long currentTime, boolean showRawLocation,Locale locale);
 
   public List<MonitoredStopVisitStructure> getMonitoredStopVisitsForStop(String stopId, 
-      int maximumOnwardCalls, long currentTime);  
+      int maximumOnwardCalls, long currentTime,Locale locale);  
 
   
   public boolean getVehiclesInServiceForRoute(String routeId, String directionId, long currentTime);

@@ -27,7 +27,7 @@
 
 <s:push value="exception">
 
-<h3 class="warning">You asked for something outside our current service area.</h3>
+<h3 class="warning"><s:i18n name='onebusaway-enterprise'><s:text name='out.of.service.area'/></s:i18n></h3>
 
 </s:push>
 

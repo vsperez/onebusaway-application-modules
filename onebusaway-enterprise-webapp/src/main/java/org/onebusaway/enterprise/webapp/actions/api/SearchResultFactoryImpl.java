@@ -18,6 +18,7 @@ package org.onebusaway.enterprise.webapp.actions.api;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import org.onebusaway.geospatial.model.EncodedPolylineBean;
@@ -93,7 +94,7 @@ public class SearchResultFactoryImpl implements SearchResultFactory {
   }
 
   @Override
-  public SearchResult getRouteResult(RouteBean routeBean) {
+  public SearchResult getRouteResult(RouteBean routeBean,Locale locale) {
     List<RouteDirection> directions = new ArrayList<RouteDirection>();
 
     ServiceDate serviceDate = null;
@@ -141,7 +142,7 @@ public class SearchResultFactoryImpl implements SearchResultFactory {
   }
 
   @Override
-  public SearchResult getStopResult(StopBean stopBean, Set<RouteBean> routeFilter) {
+  public SearchResult getStopResult(StopBean stopBean, Set<RouteBean> routeFilter,Locale locale) {
     List<RouteAtStop> routesAtStop = new ArrayList<RouteAtStop>();
 
     List<StopsForRouteBean> fullStopList = new ArrayList<>();
@@ -206,14 +207,14 @@ public class SearchResultFactoryImpl implements SearchResultFactory {
   }
 
   @Override
-  public SearchResult getGeocoderResult(EnterpriseGeocoderResult geocodeResult, Set<RouteBean> routeBean) {
+  public SearchResult getGeocoderResult(EnterpriseGeocoderResult geocodeResult, Set<RouteBean> routeBean,Locale locale) {
     List<SearchResult> routesNearby = null;
 
     if(geocodeResult.isRegion()) {
        routesNearby = _searchService.findRoutesStoppingWithinRegion(geocodeResult.getBounds(), this).getMatches();
     } else {
       routesNearby = _searchService.findRoutesStoppingNearPoint(geocodeResult.getLatitude(),
-          geocodeResult.getLongitude(), this).getMatches();
+          geocodeResult.getLongitude(), this,locale).getMatches();
     }
 
     return new GeocodeResult(geocodeResult, routesNearby);

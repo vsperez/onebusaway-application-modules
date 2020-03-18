@@ -17,6 +17,8 @@ package org.onebusaway.enterprise.webapp.actions.api;
 
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.interceptor.RequestAware;
+import org.apache.struts2.interceptor.ServletRequestAware;
 import org.onebusaway.gtfs.model.calendar.ServiceDate;
 import org.onebusaway.presentation.model.SearchResultCollection;
 import org.onebusaway.presentation.services.realtime.RealtimeService;
@@ -29,9 +31,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
 
+import javax.servlet.http.HttpServletRequest;
+
 @ParentPackage("json-default")
 @Result(type="json", params={"callbackParameter", "callback"})
-public class SearchAction extends OneBusAwayEnterpriseActionSupport {
+public class SearchAction extends OneBusAwayEnterpriseActionSupport implements ServletRequestAware{
 
   private static final long serialVersionUID = 1L;
 
@@ -49,7 +53,10 @@ public class SearchAction extends OneBusAwayEnterpriseActionSupport {
 
   private SearchResultCollection _results = null;
   
+  
   private String _q = null;
+
+private HttpServletRequest _request;
 
   public void setQ(String query) {
     if(query != null) {
@@ -61,14 +68,14 @@ public class SearchAction extends OneBusAwayEnterpriseActionSupport {
   public String execute() {    
     if(_q == null || _q.isEmpty())
       return SUCCESS;
-
+    java.util.Locale locale=_request.getLocale();
     boolean serviceDateFilterOn = Boolean.parseBoolean(_configService.getConfigurationValueAsString("display.serviceDateFiltering", "false"));
     if (serviceDateFilterOn) {
-      _results = _searchService.getSearchResultsForServiceDate(_q, new SearchResultFactoryImpl(_searchService, _transitDataService, _realtimeService, _configService), new ServiceDate(new Date(SystemTime.currentTimeMillis())));
+      _results = _searchService.getSearchResultsForServiceDate(_q, new SearchResultFactoryImpl(_searchService, _transitDataService, _realtimeService, _configService), new ServiceDate(new Date(SystemTime.currentTimeMillis())),locale);
 
     }
     else {
-      _results = _searchService.getSearchResults(_q, new SearchResultFactoryImpl(_searchService, _transitDataService, _realtimeService, _configService));
+      _results = _searchService.getSearchResults(_q, new SearchResultFactoryImpl(_searchService, _transitDataService, _realtimeService, _configService),locale);
     }
     return SUCCESS;
   }   
@@ -79,5 +86,11 @@ public class SearchAction extends OneBusAwayEnterpriseActionSupport {
   public SearchResultCollection getSearchResults() {
     return _results;
   }
+
+@Override
+public void setServletRequest(HttpServletRequest request) {
+	this._request=request;
+	
+}
 
 }

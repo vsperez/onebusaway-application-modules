@@ -19,9 +19,11 @@ import java.text.DateFormat;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.struts2.ServletActionContext;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.onebusaway.geospatial.model.CoordinatePoint;
 import org.onebusaway.gtfs.model.calendar.ServiceDate;
@@ -94,7 +96,7 @@ public class IndexAction extends OneBusAwayEnterpriseActionSupport {
   public String execute() throws Exception {
     if (_q == null)
       return SUCCESS;
-
+    Locale locale =ServletActionContext.getRequest().getLocale();
     SearchResultFactory factory = new SearchResultFactoryImpl(
         _transitDataService, _realtimeService, _configurationService);
 
@@ -102,10 +104,10 @@ public class IndexAction extends OneBusAwayEnterpriseActionSupport {
     if (_location != null && _q.isEmpty()) {
       if (_type.equals("stops")) {
         _results = _searchService.findStopsNearPoint(_location.getLat(),
-            _location.getLon(), factory, _results.getRouteFilter());
+            _location.getLon(), factory, _results.getRouteFilter(),locale);
       } else {
         _results = _searchService.findRoutesStoppingNearPoint(
-            _location.getLat(), _location.getLon(), factory);
+            _location.getLat(), _location.getLon(), factory,locale);
       }
 
     } else {
@@ -115,10 +117,10 @@ public class IndexAction extends OneBusAwayEnterpriseActionSupport {
 
       boolean serviceDateFilterOn = Boolean.parseBoolean(_configService.getConfigurationValueAsString("display.serviceDateFiltering", "false"));
       if (serviceDateFilterOn) {
-        _results = _searchService.getSearchResultsForServiceDate(_q, factory, new ServiceDate(new Date(SystemTime.currentTimeMillis())));
+        _results = _searchService.getSearchResultsForServiceDate(_q, factory, new ServiceDate(new Date(SystemTime.currentTimeMillis())),locale);
       }
       else {
-        _results = _searchService.getSearchResults(_q, factory);
+        _results = _searchService.getSearchResults(_q, factory,locale);
       }
 
       // do a bit of a hack with location matches--since we have no map to show
@@ -138,7 +140,7 @@ public class IndexAction extends OneBusAwayEnterpriseActionSupport {
           // if we got a location (point) back, find stops nearby
         } else {
           _results = _searchService.findStopsNearPoint(result.getLatitude(),
-              result.getLongitude(), factory, _results.getRouteFilter());
+              result.getLongitude(), factory, _results.getRouteFilter(),locale);
         }
       } else {
         if (_results.getMatches().isEmpty() && _results.getSuggestions().size() > 1 && !_q.contains(",")) {
