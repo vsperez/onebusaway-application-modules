@@ -6,6 +6,7 @@ OBA.LeafletMapWrapper = function(mapNode) {
 	var lon = OBA.Config.mapCenterLon;
 	var zoom = OBA.Config.mapZoom;
 	var instance = OBA.Config.mapInstance;
+	
 
 	if (!lat || !lon || !zoom) {
 		// These will get overridden by the bundle bounds after the map initially loads.
@@ -42,13 +43,19 @@ OBA.LeafletMapWrapper = function(mapNode) {
 	//-->OSM
 	else 
 	{
-		  var map = L.map('map').setView({lon: lon, lat: lat}, 2);
-
-	      // add the OpenStreetMap tiles
-	      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-	        maxZoom: 19,
-	        attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
-	      }).addTo(map);
+	
+				
+				
+	var		map = L.map('map').setView({lon: lon, lat: lat}, 2);
+			   // add the OpenStreetMap tiles
+		      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+		        maxZoom: 19,
+		        attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
+		      }).addTo(map);
+	
+			
+	
+	   
 
 	      // show the scale bar on the lower left corner
 	     //xxx L.control.scale().addTo(map);

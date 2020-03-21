@@ -17,7 +17,8 @@
 -->
 <html xmlns:jsp="http://java.sun.com/JSP/Page"
 	xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:s="/struts-tags"
-	xmlns:wiki="/oba-wiki-tags">
+	xmlns:wiki="/oba-wiki-tags" 
+	xmlns:oba="/oba-tags">
 <jsp:directive.page contentType="text/html" />
 <jsp:output omit-xml-declaration="yes"/>
 
@@ -32,14 +33,14 @@
 		<c:otherwise>
 			<h3 class="noMatches">
 				<s:url var="url" namespace="/m/wiki/Help" action="Index" />
-				<s:if test="%{t=='stops'}">
-					<s:i18n name='onebusaway-enterprise'><s:text name='no.stop.nearby'/></s:i18n>.&#160;<a href="${url}"><s:i18n name='onebusaway-enterprise'><s:text name='search.tips'/></s:i18n></a>
+				<s:if test="%{t=='stops'}"> 
+					<oba:message key='no.stop.nearby'/>.&#160;<a href="${url}"><oba:message key='search.tips'/></a>
 				</s:if>
 				<s:elseif test="%{t=='routes'}">
-					<s:i18n name='onebusaway-enterprise'><s:text name='no.routes.nearby'/></s:i18n>.&#160;<a href="${url}"><s:i18n name='onebusaway-enterprise'><s:text name='search.tips'/></s:i18n></a>
+					<oba:message key='no.routes.nearby'/>.&#160;<a href="${url}"><oba:message key='search.tips'/></a>
 				</s:elseif>
 				<s:else>
-					<s:i18n name='onebusaway-enterprise'><s:text name='js.noMatches'/></s:i18n>.&#160;<a href="${url}"><s:i18n name='onebusaway-enterprise'><s:text name='search.tips'/></s:i18n></a>
+					<oba:message key='noMatches'/>.&#160;<a href="${url}"><oba:message key='search.tips'/></a>
 				</s:else>
 			</h3>
 		</c:otherwise>
@@ -52,15 +53,15 @@
 <c:choose>
 	<c:when test="${!queryIsEmpty}">
 		<div id="cant-find">
-			<h2><s:i18n name='onebusaway-enterprise'><s:text name='cant.find'/></s:i18n></h2>
+			<h2><oba:message key="cant.find"/></h2>
 			<s:url var="url" namespace="/m/routes" action="index" />
 			
-			<p><a href="${url}"><s:i18n name='onebusaway-enterprise'><s:text name='click.here'/></s:i18n></a>&#160;<s:i18n name='onebusaway-enterprise'><s:text name='see.available.routes'/></s:i18n></p>
+			<p><a href="${url}"> <oba:message key="click.here"/></a>&#160;<oba:message key='see.available.routes'/></p>
 		</div>
 	</c:when>
 	<c:otherwise>
 		<s:url var="url" namespace="/m/routes" action="index" />
-		<div id="available-routes"><a href="${url}"><s:i18n name='onebusaway-enterprise'><s:text name='click.here'/></s:i18n></a>&#160; <s:i18n name='onebusaway-enterprise'><s:text name='list.routes'/></s:i18n></div>
+		<div id="available-routes"><a href="${url}"><oba:message key='click.here'/></a>&#160; <oba:message key='list.routes'/></div>
 	</c:otherwise>
 </c:choose>
 </html>

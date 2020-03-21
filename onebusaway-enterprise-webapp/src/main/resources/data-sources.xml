@@ -58,20 +58,20 @@
 	<!-- to use hsql run from the command line
  		see https://github.com/OneBusAway/onebusaway-application-modules/wiki/HSQLDB-Configuration
 	-->
-	<!-- <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+	 <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="org.hsqldb.jdbcDriver" />
 		<property name="url" value="jdbc:hsqldb:hsql//localhost/web;hsqldb.lock_file=false" />
 		<property name="username" value="sa" />
 		<property name="password" value="" />
-	</bean>-->
-	
+	</bean>
+	<!--
 	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
     <property name="driverClassName" value="com.mysql.jdbc.Driver" />
     <property name="url" value="jdbc:mysql://192.168.2.69:3306/oba_gtfs" />
     <property name="username" value="spring" />
     <property name="password" value="spring1" />
   </bean>
-	
+	-->
 
 	<alias name="dataSource" alias="mutableDataSource" />
 
@@ -131,7 +131,7 @@
 	</bean>
      -->
        <bean id="wikiDocumentService" class="org.onebusaway.wiki.file.FileWikiDocumentServiceImpl">
-    <property name="documentDirectory" value="/srv/www/oba/wiki/" />
+    <property name="documentDirectory" value="/Volumes/VPEREZ/OBA/wiki/" />
 </bean>
   
 <bean id="wikiRenderingService" class="org.onebusaway.wiki.xwiki.impl.XWikiRenderingServiceImpl">

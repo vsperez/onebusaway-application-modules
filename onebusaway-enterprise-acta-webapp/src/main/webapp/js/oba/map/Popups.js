@@ -262,7 +262,7 @@ OBA.Popups = (function() {
             html += '<span class="type">Vehicle #' + vehicleIdWithoutAgency + '</span>';
 		}
 		else {
-            html += '<span class="type">Vehicle #' + vehicleIdWithoutAgency + ' - ' + blockIdWithoutAgency + '</span>';
+            html += '<span class="type">'+getValueFor('vehicle')+' #' + vehicleIdWithoutAgency + ' - ' + blockIdWithoutAgency + '</span>';
 		}
 
 		var updateTimestamp = OBA.Util.ISO8601StringToDate(activity.RecordedAtTime).getTime();
@@ -290,7 +290,7 @@ OBA.Popups = (function() {
 				&& activity.MonitoredVehicleJourney.OnwardCalls.length === 0)
 			)) {
 
-			html += '<p class="service">Next stops are not known for this vehicle.</p>';
+			html += '<p class="service">'+getValueFor('no.stop.known')+'</p>';
 		} else {
 			if(typeof activity.MonitoredVehicleJourney.OnwardCalls !== 'undefined'
 				&& typeof activity.MonitoredVehicleJourney.OnwardCalls.OnwardCall !== 'undefined') {
@@ -312,11 +312,11 @@ OBA.Popups = (function() {
 					//console.log("no valid arrivals for " + vehicleId);
 				} else {
 
-					html += '<p class="service">Next stops:</p>';
+					html += '<p class="service">'+getValueFor('next.stops')+'</p>';
 
 					// Alert if Realtime Data is unavailable
 					if(!hasRealtime){
-						html += '<div class="scheduleAlert"><p>Realtime data currently unavailable for this vehicle</p></div>';
+						html += '<div class="scheduleAlert"><p>'+getValueFor('realtime.data.unavailable')+'</p></div>';
 					}
 
 					html += '<ul>';
@@ -336,7 +336,7 @@ OBA.Popups = (function() {
 						html += '<span>';
 
 						if (typeof onwardCall.ExpectedArrivalTime !== 'undefined' && onwardCall.ExpectedArrivalTime !== null) {
-							var timePrediction = OBA.Util.getArrivalEstimateForISOStringWithCheck(onwardCall.ExpectedArrivalTime, updateTimestampReference, "minute", onwardCall.Extensions.Distances.DistanceFromCall);
+							var timePrediction = OBA.Util.getArrivalEstimateForISOStringWithCheck(onwardCall.ExpectedArrivalTime, updateTimestampReference, getValueFor('js.unitMinute'), onwardCall.Extensions.Distances.DistanceFromCall);
 							if (timePrediction != null && timePrediction != "null") {
 								html += timePrediction + ", "
 							}
@@ -362,7 +362,7 @@ OBA.Popups = (function() {
 			html += OBA.Config.infoBubbleFooterFunction('route', activity.MonitoredVehicleJourney.PublishedLineName);
 		
 		html += "<ul class='links'>";
-		html += "<a href='#' id='zoomHere'>Center & Zoom Here</a>";
+		html += "<a href='#' id='zoomHere'>"+getValueFor('js.centerZoom')+"</a>";
 		html += "</ul>";
 
 		// (end popup)
@@ -605,7 +605,7 @@ OBA.Popups = (function() {
 						
 						// Alert if Realtime data is unavailable
 						if(typeof hasRealtime === 'undefined' || hasRealtime === null || hasRealtime == false){
-							distance += '<span class="scheduleAlert"><span class="not_bold"> ('+getValueFor('schedule.data')+')</span></span>';
+							distance += '<span class="scheduleAlert"><span class="not_bold"> ('+getValueFor('using.schedule.time')+')</span></span>';
 							arrival = 'arrival_schedule arrival_schedule_' + vehicleType;
 						}
 						// If realtime data is available and config is set, add vehicleID

@@ -17,11 +17,10 @@
 -->
 <html xmlns:jsp="http://java.sun.com/JSP/Page"
 	xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:s="/struts-tags"
-	xmlns:wiki="/oba-wiki-tags">
+	xmlns:wiki="/oba-wiki-tags" xmlns:oba="/oba-tags">
 
 	<h3>
-	<s:i18n name='onebusaway-enterprise'><s:text name='nearby.routes'/></s:i18n>
-			
+	<oba:message key='nearby.routes'/>
 	</h3>
 		
 	<div class="routeList">

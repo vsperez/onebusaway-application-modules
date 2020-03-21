@@ -18,7 +18,7 @@
 -->
 <jsp:root version="2.0" xmlns:jsp="http://java.sun.com/JSP/Page"
 	xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:s="/struts-tags"
-	xmlns:wiki="/oba-wiki-tags">
+	xmlns:wiki="/oba-wiki-tags" xmlns:oba="/oba-tags">
 <jsp:directive.page contentType="text/javascript" pageEncoding="UTF8" />
 if(typeof OBA !== 'undefined' &amp;&amp; typeof OBA.Config !== 'undefined') {
 	OBA.Config.staleTimeout=<s:property value="staleTimeout" />;
@@ -50,16 +50,16 @@ if(typeof OBA !== 'undefined' &amp;&amp; typeof OBA.Config !== 'undefined') {
 
 			if(type === "stop")	{
 				html += '<div class="footer">';
-				html += '<span class="header"><s:i18n name='onebusaway-enterprise'><s:text name='whileAtBusStop'/></s:i18n></span>';
+				html += '<span class="header"><oba:message key='whileAtBusStop'/></span>';
 				html += '<br/>';
 				
 				if(OBA.Config.showSMS === "true"){
 					html += 'Send ' + OBA.Config.txtPrefix + ' <strong>' + query + '</strong> as a text to <strong>' + OBA.Config.shortCode + '</strong>';
 					html += '<br/>';
-					html += 'or check <a href="queryLink">this stop</a> on your smartphone.';
+					html += 'or check <a href="queryLink"><oba:message key='thisStop'/></a> <oba:message key='inYourPhone'/>';
 				}
 				else{
-					html += '<s:i18n name='onebusaway-enterprise'><s:text name='check'/></s:i18n>&#160; <a href="queryLink"> <s:i18n name='onebusaway-enterprise'><s:text name='thisStop'/></s:i18n></a> &#160;<s:i18n name='onebusaway-enterprise'><s:text name='inYourPhone'/></s:i18n>';
+					html += '<oba:message key='check'/>&#160; <a href="queryLink"> <oba:message key='thisStop'/></a> &#160;<oba:message key='inYourPhone'/>';
 					
 				}	
 				html += '</div>';
@@ -69,10 +69,10 @@ if(typeof OBA !== 'undefined' &amp;&amp; typeof OBA.Config !== 'undefined') {
 
 			} else if(type === "route") {
 				html += '<div class="footer">';
-				html += '<span class="header"><s:i18n name='onebusaway-enterprise'><s:text name='whileAtBusStop'/></s:i18n></span>';
+				html += '<span class="header"><oba:message key='whileAtBusStop'/></span>';
 				html += '<br/>';
-				html += '<s:i18n name='onebusaway-enterprise'><s:text name='check'/></s:i18n>&#160; <a href="queryLink"><s:i18n name='onebusaway-enterprise'><s:text name='thisRoute'/></s:i18n></a> &#160;<s:i18n name='onebusaway-enterprise'><s:text name='inYourPhone'/></s:i18n>';
-				html += 'Check <a href="queryLink">this route</a> on your smartphone.';
+				html += '<oba:message key='check'/>&#160; <a href="queryLink"><oba:message key='thisRoute'/></a> &#160;<oba:message key='inYourPhone'/>';
+				
 
 				html += '</div>';
 

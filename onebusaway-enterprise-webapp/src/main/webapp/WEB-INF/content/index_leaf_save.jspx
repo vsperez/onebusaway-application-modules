@@ -70,30 +70,23 @@
 <link rel="stylesheet" href="${url}" type="text/css"
 	media="screen,print" />
 
-
-<s:if test="mapInstance=='google'">
-
-	<s:url var="url" value="https://maps.googleapis.com/maps/api/js">
-		<s:param name="v">3</s:param>
-		<s:param name="client">
-			<s:property value="googleMapsClientId" />
-		</s:param>
-		<s:param name="channel">
-			<s:property value="googleMapsChannelId" />
-		</s:param>
-		<s:param name="key">
-			<s:property value="googleMapsApiKey" />
-		</s:param>
-		<s:param name="sensor">false</s:param>
-	</s:url>
+<s:url var="url" value="https://maps.googleapis.com/maps/api/js">
+	<s:param name="v">3</s:param>
+	<s:param name="client">
+		<s:property value="googleMapsClientId" />
+	</s:param>
+	<s:param name="channel">
+		<s:property value="googleMapsChannelId" />
+	</s:param>
+	<s:param name="key">
+		<s:property value="googleMapsApiKey" />
+	</s:param>
+	<s:param name="sensor">false</s:param>
+</s:url>
 <script src="${url}" type="text/javascript">
-	<!-- //prevent jspx minimization -->
-		
-	</script>
-</s:if>
-<s:else>
-
-</s:else>
+<!-- //prevent jspx minimization -->
+	
+</script>
 
 <s:url var="url" value="/js/oba/obai18n.js">
 	<s:param name="v">
@@ -104,9 +97,8 @@
 <!-- //prevent jspx minimization -->
 	
 </script>
-<!-- //LOAD JS PROPERTIES -->
+<!-- LOAD JS PROPERTIES -->
 <script>
-
 	dictionary.set('js.realtime', "<oba:message key='realtime'/>");
 	dictionary.set('js.scheduled', "<oba:message key='scheduled'/>");
 	dictionary.set('js.busesenroute', "<oba:message key='busesenroute'/>");
@@ -145,8 +137,6 @@
 			"<oba:message key='realtime.data.unavailable'/>");
 	dictionary.set('next.stops', "<oba:message key='next.stops'/>");
 	dictionary.set('vehicle', "<oba:message key='vehicle'/>");
-	dictionary.set('routes', "<oba:message key='routes'/>");
-	dictionary.set('routes.available', "<oba:message key='routes.available'/>");
 </script>
 
 
@@ -172,7 +162,15 @@
 	
 </script>
 
-
+<s:url var="url" value="/js/lib/markerManager.js">
+	<s:param name="v">
+		<s:property value="frontEndVersion" />
+	</s:param>
+</s:url>
+<script type="text/javascript" src="${url}">
+<!-- //prevent jspx minimization -->
+	
+</script>
 
 <s:url var="url" value="/js/lib/rgbcolor.js">
 	<s:param name="v">
@@ -235,137 +233,68 @@
 <!-- //prevent jspx minimization -->
 	
 </script>
- 
-<s:if test="mapInstance=='google'">
 
-
-	<s:url var="url" value="/js/lib/markerManager.js">
-		<s:param name="v">
-			<s:property value="frontEndVersion" />
-		</s:param>
-	</s:url>
-	<script type="text/javascript" src="${url}">
-	<!-- //prevent jspx minimization -->
-		
-	</script>
-
-	<s:url var="url" value="/js/oba/map/GoogleMapWrapper.js">
-		<s:param name="v">
-			<s:property value="frontEndVersion" />
-		</s:param>
-	</s:url>
-	<script type="text/javascript" src="${url}">
-	<!-- //prevent jspx minimization -->
-		
-	</script>
-
-	<s:url var="url" value="/js/oba/map/Popups.js">
-		<s:param name="v">
-			<s:property value="frontEndVersion" />
-		</s:param>
-	</s:url>
-	<script type="text/javascript" src="${url}">
-	<!-- //prevent jspx minimization -->
-		
-	</script>
-
-	<s:url var="url" value="/js/oba/map/RouteMap.js">
-		<s:param name="v">
-			<s:property value="frontEndVersion" />
-		</s:param>
-	</s:url>
-	<script type="text/javascript" src="${url}">
-	<!-- //prevent jspx minimization -->
-		
-	</script>
-
-	<s:url var="url" value="/js/lib/markerAnimate.js">
-		<s:param name="v">
-			<s:property value="frontEndVersion" />
-		</s:param>
-	</s:url>
-	<script type="text/javascript" src="${url}">
-	<!-- //prevent jspx minimization -->
-		
-	</script>
-
-
-	<s:url var="url" value="/js/oba/map/Sidebar.js">
-		<s:param name="v">
-			<s:property value="frontEndVersion" />
-		</s:param>
-	</s:url>
-	<script type="text/javascript" src="${url}">
-	<!-- //prevent jspx minimization -->
-		
-	</script>
-
-	<s:url var="url" value="/js/oba/GoogleTranslate.js">
-		<s:param name="v">
-			<s:property value="frontEndVersion" />
-		</s:param>
-	</s:url>
-	<script type="text/javascript" src="${url}">
-	<!-- //prevent jspx minimization -->
-		
-	</script>
-
-
-</s:if>
-<s:else>
-	<s:url var="url" value="/js/lib/leaflet.js">
-	</s:url>
-	<script src="${url}" type="text/javascript">
-	<!-- //prevent jspx minimization -->
-		
-	</script>
+<s:url var="url" value="/js/lib/leaflet.js">
+</s:url>
+<script src="${url}" type="text/javascript">
+<!-- //prevent jspx minimization -->
+	
+</script>
 
 
 
-	<s:url var="url" value="/js/oba/map/LeafletMapWrapper.js">
-		<s:param name="v">
-			<s:property value="frontEndVersion" />
-		</s:param>
-	</s:url>
-	<script type="text/javascript" src="${url}">
-	<!-- //prevent jspx minimization -->
-		
-	</script>
-	<s:url var="url" value="/js/oba/map/LeafletPopups.js">
-		<s:param name="v">
-			<s:property value="frontEndVersion" />
-		</s:param>
-	</s:url>
-	<script type="text/javascript" src="${url}">
-	<!-- //prevent jspx minimization -->
-		
-	</script>
-	<s:url var="url" value="/js/oba/map/LeafletRouteMap.js">
-		<s:param name="v">
-			<s:property value="frontEndVersion" />
-		</s:param>
-	</s:url>
-	<script type="text/javascript" src="${url}">
-	<!-- //prevent jspx minimization -->
-		
-	</script>
+<s:url var="url" value="/js/oba/map/LeafletMapWrapper.js">
+	<s:param name="v">
+		<s:property value="frontEndVersion" />
+	</s:param>
+</s:url>
+<script type="text/javascript" src="${url}">
+<!-- //prevent jspx minimization -->
+	
+</script>
+<s:url var="url" value="/js/oba/map/LeafletPopups.js">
+	<s:param name="v">
+		<s:property value="frontEndVersion" />
+	</s:param>
+</s:url>
+<script type="text/javascript" src="${url}">
+<!-- //prevent jspx minimization -->
+	
+</script>
+<s:url var="url" value="/js/oba/map/LeafletRouteMap.js">
+	<s:param name="v">
+		<s:property value="frontEndVersion" />
+	</s:param>
+</s:url>
+<script type="text/javascript" src="${url}">
+<!-- //prevent jspx minimization -->
+	
+</script>
 
 
-	<s:url var="url" value="/js/oba/map/LeafletSidebar.js">
-		<s:param name="v">
-			<s:property value="frontEndVersion" />
-		</s:param>
-	</s:url>
-	<script type="text/javascript" src="${url}">
-	<!-- //prevent jspx minimization -->
-		
-	</script>
+<s:url var="url" value="/js/oba/map/LeafletSidebar.js">
+	<s:param name="v">
+		<s:property value="frontEndVersion" />
+	</s:param>
+</s:url>
+<script type="text/javascript" src="${url}">
+<!-- //prevent jspx minimization -->
+	
+</script>
+
+<s:url var="url" value="/js/oba/GoogleTranslate.js">
+	<s:param name="v">
+		<s:property value="frontEndVersion" />
+	</s:param>
+</s:url>
+<script type="text/javascript" src="${url}">
+<!-- //prevent jspx minimization -->
+	
+</script>
 
 
-</s:else>
 </head>
 <body>
-
 	<div id="content" class="map">
 		<div id="searchbar">
 			<div class="sidebar">

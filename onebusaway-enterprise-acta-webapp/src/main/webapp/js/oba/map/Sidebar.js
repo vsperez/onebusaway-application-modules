@@ -670,7 +670,7 @@ OBA.Sidebar = function() {
 						// result is a region
 						if(matches[0].isRegion === true) {
 							if(matches[0].nearbyRoutes.length === 0) {
-								showNoResults("No hay paraderos cercanos.");
+								showNoResults(getValueFor('no.stop.nearby'));
 							} else {
 								showRoutePickerList(matches[0].nearbyRoutes);								
 							}
@@ -686,9 +686,9 @@ OBA.Sidebar = function() {
 						// result is a point--intersection or address
 						} else {
 							if(matches[0].nearbyRoutes.length === 0) {
-								showNoResults("No hay paraderos cercanos.");
+								showNoResults(getValueFor('no.routes.nearby'));
 							} else {
-								addRoutesToLegend(matches[0].nearbyRoutes, "Recorridos cercanas:", null, null);
+								addRoutesToLegend(matches[0].nearbyRoutes, getValueFor('nearby.routes'), null, null);
 							}
 							
 							var latlng = new google.maps.LatLng(matches[0].latitude, matches[0].longitude);
@@ -702,14 +702,14 @@ OBA.Sidebar = function() {
 						break;
 				
 					case "RouteResult":
-						addRoutesToLegend(matches, "Recorridos:", null, null);
+						addRoutesToLegend(matches, getValueFor('routes'), null, null);
 
 						routeMap.panToRoute(matches[0].id);
 						(wizard && wizard.enabled()) ? results.triggerHandler('route_result') : null;
 						break;
 					
 					case "StopResult":
-						addRoutesToLegend(matches[0].routesAvailable, "Recorridos disponibles:", routeFilterShortName, matches[0].id);
+						addRoutesToLegend(matches[0].routesAvailable, getValueFor('routes.available'), routeFilterShortName, matches[0].id);
 
 						var latlng = new google.maps.LatLng(matches[0].latitude, matches[0].longitude);
                         if (showPopup != undefined && !showPopup) {
@@ -728,7 +728,7 @@ OBA.Sidebar = function() {
 				
 			} else if (matches.length > 1 && resultType == "RouteResult") {
 				// suppport multiple routes found
-				addRoutesToLegend(matches, "Recorridos:", null, null);
+				addRoutesToLegend(matches, getValueFor('routes'), null, null);
 				routeMap.panToRoute(matches[0].id);
 				(wizard && wizard.enabled()) ? results.triggerHandler('route_result') : null;
 			} else if (matches.length > 1 && resultType == "StopResult") {
@@ -775,20 +775,24 @@ OBA.Sidebar = function() {
 			// Remove the global alerts dialog under the map on page load
 			// if it exists. It will be displayed again when a search is performed.
 			mapGlobalAlerts.detach();
-			
+			console.log("HERE");
 			// initialize map, and continue initialization of things that use the map
 			// on load only when google maps says it's ready.
 			routeMap = OBA.RouteMap(document.getElementById("map"), function() {
 				// deep link handler
 				jQuery.history.init(function(hash) {
+					console.log("history");
+					console.log(hash);
 					if(hash !== null && hash !== "") {
                         var params = getParameters(true);
 						var pos = hash.indexOf("?");
 						if (pos > 0) {
 							hash = hash.substring(0, pos);
 						}
+						
 						var searchInput = jQuery("#searchbar form input[type=text]");
 						searchInput.val(decodeURIComponent(hash));
+						console.log(decodeURIComponent(hash));
 						var showPopup = true;
 						if (params['showPopup'] != undefined)
 							showPopup = !(params['showPopup'] == "false");

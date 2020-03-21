@@ -326,5 +326,8 @@ public class IndexAction extends OneBusAwayEnterpriseActionSupport {
   public String getShowAgencyNames() {
     return _configurationService.getConfigurationValueAsString("display.showAgencyNames", "false");
   }
+  public String getMapInstance() {
+		    return _configurationService.getConfigurationValueAsString("display.mapInstance", "google");
+  }
 
 }

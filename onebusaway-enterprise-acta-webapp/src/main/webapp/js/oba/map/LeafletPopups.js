@@ -19,23 +19,26 @@ var OBA = window.OBA || {};
 OBA.Popups = (function() {	
 
 	var popup = null;
-
+	var ___id=Math.random(); 
 	var refreshPopupRequest = null;
 
 	var stopBubbleListener = null, stopBubbleTrigger = null;
 
 	function closePopup() {
+		console.log("CLOSE!!!");
 		popup = null;
 	}
 
 	// PUBLIC METHODS
 	function showPopupWithContent(map, marker, content) {
+	console.log("showPopupWithContent");
+		closePopup();
 		popup = new L.Popup({
 			offset: new L.Point(0, (marker.options.icon.size.height / 2)),
 			disableAutoPan: false
 		});
 
-		map.addEventListener("popupclose", closePopup);
+		//map.addEventListener("popupclose", closePopup);
 
 		popup.setContent(content);
 		marker.bindPopup(popup);
@@ -43,12 +46,16 @@ OBA.Popups = (function() {
 	}
 
 	function showPopupWithContentFromRequest(map, marker, url, params, contentFn, routeFilter) {
+		closePopup();
+		console.log("showPopupWithContentFromRequest");
 		popup = new L.Popup({
 			offset: new L.Point(0, (marker.options.icon.options.iconSize.y / 2)),
 			disableAutoPan: false,
 			stopId: marker.stopId // to lock an icon on the map when a popup is open for it
 		});
-
+		console.log("1");
+		console.log(popup);
+		//map.addEventListener("popupclose",function(){ closePopup();alert("close");});
 		var popupContainerId = "container" + Math.floor(Math.random() * 1000000);
 		var refreshFn = function(openBubble) {
 			// pass a new "now" time for debugging if we're given one
@@ -56,16 +63,19 @@ OBA.Popups = (function() {
 				params.time = OBA.Config.time;
 			}
 
-			if(refreshPopupRequest !== null) {
-				refreshPopupRequest.abort();
+			if( typeof refreshPopupRequest !== 'undefined' && refreshPopupRequest !== null) {
+				if ('abort' in refreshPopupRequest) {
+					refreshPopupRequest.abort();
+				}
 				openBubble = true;
 			}
 			refreshPopupRequest = jQuery.getJSON(url, params, function(json) {
-				popup = new L.Popup({
-					offset: new L.Point(0, (marker.options.icon.options.iconSize.y / 2)),
-					disableAutoPan: false,
-					stopId: marker.stopId // to lock an icon on the map when a popup is open for it
-				});
+				if(popup === null)
+				{
+					return;
+				}
+				var preload_content = jQuery("#" + popupContainerId);
+				var scroll = preload_content.scrollTop();
 				popup.setContent(contentFn(json, popupContainerId, marker, routeFilter));
 
 				if(openBubble === true) {
@@ -89,6 +99,7 @@ OBA.Popups = (function() {
 		popup.refreshFn = refreshFn;	
 
 		var updateTimestamp = function() {
+		 
 			var timestampContainer = jQuery("#" + popupContainerId).find(".updated");
 
 			if(timestampContainer.length === 0) {
@@ -98,10 +109,15 @@ OBA.Popups = (function() {
 			var age = parseInt(timestampContainer.attr("age"), 10);
 			var referenceEpoch = parseInt(timestampContainer.attr("referenceEpoch"), 10);
 			var newAge = age + ((new Date().getTime() - referenceEpoch) / 1000);
-			timestampContainer.text("Data updated " + OBA.Util.displayTime(newAge));
+			timestampContainer.text(getValueFor('js.dataUpdated') + OBA.Util.displayTime(newAge));
+		
 		};
-		updateTimestamp();		
-		popup.updateTimestamp = updateTimestamp;
+		updateTimestamp();	
+		console.log("2");
+		console.log(popup);
+		popup.updateTimestamp =updateTimestamp;// updateTimestamp;
+		console.log("3");
+		console.log(popup);
 	}
 
 	// CONTENT GENERATION
@@ -135,28 +151,41 @@ OBA.Popups = (function() {
 		return html;
 	}
 
+
 	function processAlertData(situationExchangeDelivery) {
 		var alertData = {};
 
-		if (situationExchangeDelivery && situationExchangeDelivery.length > 0) {
-			jQuery.each(situationExchangeDelivery[0].Situations.PtSituationElement, function(_, ptSituationElement) {
-				// Skip the alert if there is no VehicleJourneys... It's probably a global alert.
-				if (!ptSituationElement.Affects.hasOwnProperty('VehicleJourneys'))
-					return true;
-				jQuery.each(ptSituationElement.Affects.VehicleJourneys.AffectedVehicleJourney, function(_, affectedVehicleJourney) {
-					var lineRef = affectedVehicleJourney.LineRef;
-					if (!(lineRef in alertData)) {
-						alertData[lineRef] = {};
-					}
-					if (!(ptSituationElement.SituationNumber in alertData[lineRef])) {
-						alertData[lineRef][ptSituationElement.SituationNumber] = ptSituationElement;
-					}
-				});
-			});
+			if (situationExchangeDelivery && situationExchangeDelivery.length > 0) {
+            jQuery.each(situationExchangeDelivery[0].Situations.PtSituationElement, function(_, ptSituationElement) {if (ptSituationElement.Affects.hasOwnProperty('VehicleJourneys')) {
+                    jQuery.each(ptSituationElement.Affects.VehicleJourneys.AffectedVehicleJourney, function(_, affectedVehicleJourney) {
+                        var lineRef = affectedVehicleJourney.LineRef;
+                        if (!(lineRef in alertData)) {
+                            alertData[lineRef] = {};
+                        }
+                        if (!(ptSituationElement.SituationNumber in alertData[lineRef])) {
+                            alertData[lineRef][ptSituationElement.SituationNumber] = ptSituationElement;
+                        }
+                    });
+                }
+                else if (ptSituationElement.Affects.hasOwnProperty('StopPoints')) {
+                    jQuery.each(ptSituationElement.Affects.StopPoints.AffectedStopPoint, function(_, affectedStopPoint) {
+                        var stopPointRef = affectedStopPoint.StopPointRef;
+                        if (!(stopPointRef in alertData)) {
+                            alertData[stopPointRef] = {};
+                        }
+                        if (!(ptSituationElement.SituationNumber in alertData[stopPointRef])) {
+                            alertData[stopPointRef][ptSituationElement.SituationNumber] = ptSituationElement;
+                        }
+                    });
+                }
+                else {
+                    return true;
+                }
+            });
 		}
-
 		return alertData;
 	}
+	
 
 	function activateAlertLinks(content) {
 		var alertLinks = content.find(".alert-link");
@@ -206,16 +235,32 @@ OBA.Popups = (function() {
 		}
 
 		var vehicleId = activity.MonitoredVehicleJourney.VehicleRef;
-		var vehicleIdParts = vehicleId.split("_");
-		var vehicleIdWithoutAgency = vehicleIdParts[1];
-		var routeName = activity.MonitoredVehicleJourney.LineRef;
+        var vehicleIdParts = vehicleId.split("_");
+        var blockId = activity.MonitoredVehicleJourney.BlockRef;
+        var vehicleIdWithoutAgency = vehicleIdParts[1];
+        var blockIdWithoutAgency = blockId.split("_")[1];
+        var routeName = activity.MonitoredVehicleJourney.LineRef;
+        var hasRealtime = activity.MonitoredVehicleJourney.Monitored
 
 		var html = '<div id="' + popupContainerId + '" class="popup">';
 
-		// header
-		html += '<div class="header vehicle">';
-		html += '<p class="title">' + activity.MonitoredVehicleJourney.PublishedLineName + " " + activity.MonitoredVehicleJourney.DestinationName + '</p><p>';
-		html += '<span class="type">Vehicle #' + vehicleIdWithoutAgency + '</span>';
+  // Don't show Vehicle Id if no Realtime data
+        if (typeof hasRealtime === 'undefined' || hasRealtime === null || hasRealtime == false) {
+            hasRealtime = false;
+            vehicleIdWithoutAgency = 'N/A';
+        }
+
+        // header
+        html += '<div class="header vehicle">';
+        html += '<p class="title">' + activity.MonitoredVehicleJourney.PublishedLineName + " " + activity.MonitoredVehicleJourney.DestinationName + '</p><p>';
+
+        //don't show block id if there is none or if config says no
+        if (OBA.Config.showBlockIdInVehiclePopup == 'false' || typeof blockIdWithoutAgency === 'undefined' || blockIdWithoutAgency === null) {
+            html += '<span class="type">Vehicle #' + vehicleIdWithoutAgency + '</span>';
+		}
+		else {
+            html += '<span class="type">'+getValueFor('vehicle')+' #' + vehicleIdWithoutAgency + ' - ' + blockIdWithoutAgency + '</span>';
+		}
 
 		var updateTimestamp = OBA.Util.ISO8601StringToDate(activity.RecordedAtTime).getTime();
 		var updateTimestampReference = OBA.Util.ISO8601StringToDate(r.Siri.ServiceDelivery.ResponseTimestamp).getTime();
@@ -224,70 +269,102 @@ OBA.Popups = (function() {
 		var staleClass = ((age > OBA.Config.staleTimeout) ? " stale" : "");			
 
 		html += '<span class="updated' + staleClass + '"' + 
-		' age="' + age + '"' + 
-		' referenceEpoch="' + new Date().getTime() + '"' + 
-		'>Data updated ' 
-		+ OBA.Util.displayTime(age) 
-		+ '</span>'; 
-
+				' age="' + age + '"' + 
+				' referenceEpoch="' + new Date().getTime() + '"' + 
+				'>'+   ((dictionary!=undefined && dictionary!=null)?getValueFor('js.dataUpdated'): 'Data updated')    +' ' + 
+				+ OBA.Util.displayTime(age) 
+				+ '</span>'; 
+		
 		// (end header)
 		html += '</p>';
 		html += '</div>';
-
+		
 		// service available at stop
 		if(typeof activity.MonitoredVehicleJourney.MonitoredCall === 'undefined' && (
-				(typeof activity.MonitoredVehicleJourney.OnwardCalls === 'undefined'
-					|| typeof activity.MonitoredVehicleJourney.OnwardCalls.OnwardCall === 'undefined') 
-					|| (typeof activity.MonitoredVehicleJourney.OnwardCalls !== 'undefined' 
-						&& activity.MonitoredVehicleJourney.OnwardCalls.length === 0)
-		)) {
+			(typeof activity.MonitoredVehicleJourney.OnwardCalls === 'undefined'
+				|| typeof activity.MonitoredVehicleJourney.OnwardCalls.OnwardCall === 'undefined') 
+			|| (typeof activity.MonitoredVehicleJourney.OnwardCalls !== 'undefined' 
+				&& activity.MonitoredVehicleJourney.OnwardCalls.length === 0)
+			)) {
 
-			html += '<p class="service">Next stops are not known for this vehicle.</p>';
+			html += '<p class="service">'+getValueFor('no.stop.known')+'</p>';
 		} else {
 			if(typeof activity.MonitoredVehicleJourney.OnwardCalls !== 'undefined'
 				&& typeof activity.MonitoredVehicleJourney.OnwardCalls.OnwardCall !== 'undefined') {
 
-				html += '<p class="service">Next stops:</p>';
-				html += '<ul>';			
-
+				var lastExpectedArrivalTime = null;
+				// SIRI occasionally gives us historical info -- if all calls are older than staleTimeout don't display
 				jQuery.each(activity.MonitoredVehicleJourney.OnwardCalls.OnwardCall, function(_, onwardCall) {
-					var stopIdParts = onwardCall.StopPointRef.split("_");
-					var stopIdWithoutAgencyId = stopIdParts[1];
-
-					var lastClass = ((_ === activity.MonitoredVehicleJourney.OnwardCalls.OnwardCall.length - 1) ? " last" : "");
-
-					html += '<li class="nextStop' + lastClass + '">';				
-					html += '<a href="#' + stopIdWithoutAgencyId + '">' + onwardCall.StopPointName + '</a>';
-					html += '<span>';
-
 					if(typeof onwardCall.ExpectedArrivalTime !== 'undefined' && onwardCall.ExpectedArrivalTime !== null) {
-						html += OBA.Util.getArrivalEstimateForISOString(onwardCall.ExpectedArrivalTime, updateTimestampReference);
-						html += ", " + onwardCall.Extensions.Distances.PresentableDistance;
-					} else {
-						html += onwardCall.Extensions.Distances.PresentableDistance;
+						var staleThresholdDate = new Date(updateTimestampReference - (OBA.Config.staleTimeout*1000)).getTime();
+						if (OBA.Util.ISO8601StringToDate(onwardCall.ExpectedArrivalTime).getTime()  > staleThresholdDate) {
+							lastExpectedArrivalTime = OBA.Util.ISO8601StringToDate(onwardCall.ExpectedArrivalTime);
+						}
+					}
+				}
+				);
+
+				if (lastExpectedArrivalTime === null) {
+					// we have nothing to show
+					//console.log("no valid arrivals for " + vehicleId);
+				} else {
+
+					html += '<p class="service">'+getValueFor('next.stops')+'</p>';
+
+					// Alert if Realtime Data is unavailable
+					if(!hasRealtime){
+						html += '<div class="scheduleAlert"><p>'+getValueFor('realtime.data.unavailable')+'</p></div>';
 					}
 
-					html += '</span></li>';
-				});
+					html += '<ul>';
 
-				html += '</ul>';
+					jQuery.each(activity.MonitoredVehicleJourney.OnwardCalls.OnwardCall, function (_, onwardCall) {
+						var stopIdParts = onwardCall.StopPointRef.split("_");
+						var stopIdWithoutAgencyId = stopIdParts[1];
+						var stopRef = onwardCall.StopPointRef;
+						if (onwardCall.ArrivalPlatformName != undefined) {
+							// here we override the arrivalPlatformName to contain the stopcode
+							stopRef = onwardCall.ArrivalPlatformName;
+						}
+						var lastClass = ((_ === activity.MonitoredVehicleJourney.OnwardCalls.OnwardCall.length - 1) ? " last" : "");
+
+						html += '<li class="nextStop' + lastClass + '">';
+						html += '<a href="' + OBA.Config.searchParamsPrefix + stopRef + '">' + onwardCall.StopPointName + '</a>';
+						html += '<span>';
+
+						if (typeof onwardCall.ExpectedArrivalTime !== 'undefined' && onwardCall.ExpectedArrivalTime !== null) {
+							var timePrediction = OBA.Util.getArrivalEstimateForISOStringWithCheck(onwardCall.ExpectedArrivalTime, updateTimestampReference, getValueFor('js.unitMinute'), onwardCall.Extensions.Distances.DistanceFromCall);
+							if (timePrediction != null && timePrediction != "null") {
+								html += timePrediction + ", "
+							}
+							// this is handy for debugging arrival/departure issues
+							//html += "(" + OBA.Util.debugTime(onwardCall.ExpectedArrivalTime) + ", " + OBA.Util.debugTime(onwardCall.ExpectedDepartureTime) + ") "
+
+						}
+						html += onwardCall.Extensions.Distances.PresentableDistance;
+						html += '</span></li>';
+					});
+
+					html += '</ul>';
+				}
 			}
 		}
-
-		// service alerts
-		if (routeName in alertData) {
-			html += ' <a id="alert-link||' + routeName + '" class="alert-link" href="#">Service Alert for ' + activity.MonitoredVehicleJourney.PublishedLineName + '</a>';
+		
+		// service alert links to sidebar if relevant
+		if (routeName in alertData && OBA.Config.hasSidebar) {
+			html += ' <a id="alert-link||' + routeName + '" class="alert-link" href="#">' + OBA.Config.serviceAlertText + ' for ' + activity.MonitoredVehicleJourney.PublishedLineName + '</a>';
 		}
 
-		html += OBA.Config.infoBubbleFooterFunction('route', activity.MonitoredVehicleJourney.PublishedLineName);
-
+		if (OBA.Config.includeBubbleFooter)
+			html += OBA.Config.infoBubbleFooterFunction('route', activity.MonitoredVehicleJourney.PublishedLineName);
+		
 		html += "<ul class='links'>";
-		html += "<a href='#' id='zoomHere'>Center & Zoom Here</a>";
+		html += "<a href='#' id='zoomHere'>"+getValueFor('js.centerZoom')+"</a>";
 		html += "</ul>";
 
 		// (end popup)
 		html += '</div>';
-
+		
 		var content = jQuery(html);
 		var zoomHereLink = content.find("#zoomHere");
 
@@ -314,12 +391,16 @@ OBA.Popups = (function() {
 		// header
 		var stopId = stopResult.id;
 		var stopIdParts = stopId.split("_");
-		var stopIdWithoutAgency = stopIdParts[1];
+		var uniqueStopId = OBA.Util.displayStopId(stopId);
+		var stopCode = stopResult.code;
 
+		if(stopCode == null)
+			stopCode = uniqueStopId;
+		
 		html += '<div class="header stop">';
 		html += '<p class="title">' + stopResult.name + '</p><p>';
-		html += '<span class="type">Stopcode ' + stopIdWithoutAgency + '</span>';
-
+		html += '<span class="type">' +  ((dictionary!=undefined && dictionary!=null)?getValueFor('js.stopcode'): 'Stopcode')    + ' ' + stopCode + '</span>';
+		
 		// update time across all arrivals
 		var updateTimestampReference = OBA.Util.ISO8601StringToDate(siri.Siri.ServiceDelivery.ResponseTimestamp).getTime();
 		var maxUpdateTimestamp = null;
@@ -329,144 +410,176 @@ OBA.Popups = (function() {
 				maxUpdateTimestamp = updateTimestamp;
 			}
 		});	
-
+		
 		if (maxUpdateTimestamp === null) {
 			maxUpdateTimestamp = updateTimestampReference;
 		}
-
+		
 		if(maxUpdateTimestamp !== null) {
 			var age = (parseInt(updateTimestampReference, 10) - parseInt(maxUpdateTimestamp, 10)) / 1000;
 			var staleClass = ((age > OBA.Config.staleTimeout) ? " stale" : "");
 
 			html += '<span class="updated' + staleClass + '"' + 
-			' age="' + age + '"' + 
-			' referenceEpoch="' + new Date().getTime() + '"' + 
-			'>Data updated ' 
-			+ OBA.Util.displayTime(age) 
-			+ '</span>'; 
+					' age="' + age + '"' + 
+					' referenceEpoch="' + new Date().getTime() + '"' + 
+					'>'+   ((dictionary!=undefined && dictionary!=null)?getValueFor('js.dataUpdated'): 'Data updated')    +' '   
+					+ OBA.Util.displayTime(age) 
+					+ '</span>'; 
 		}
-
+		
 		// (end header)
 		html += '  </p>';
 		html += ' </div>';
 
-		var routeAndDirectionWithArrivals = {};
-		var routeAndDirectionWithArrivalsCount = 0;
-		var routeAndDirectionWithoutArrivals = {};
-		var routeAndDirectionWithoutArrivalsCount = 0;
-		var routeAndDirectionWithoutSerivce = {};
-		var routeAndDirectionWithoutSerivceCount = 0;
-		var totalRouteCount = 0;
+        //check for stop level alerts
+         if (stopId in alertData) {
 
-		var filterExistsInResults = false;
+             var serviceAlertHeader = jQuery("<p class='popupServiceAlert'>" + OBA.Config.serviceAlertText + " for " + stopCode + ". Click for info</p>");
 
-		jQuery.each(stopResult.routesAvailable, function(_, routeResult) {
-			if (routeResult.shortName === routeFilter) {
-				filterExistsInResults = true;
-				return false;
-			}
-		});
+             var serviceAlertList = jQuery("" +
+                 "<ul></ul>")
+                 .addClass("popupAlerts");
 
-		// break up routes here between those with and without service
-		var filteredMatches = jQuery("<div></div>");
-		var filteredMatchesData = jQuery('<div></div>').addClass("popup-filtered-matches");
-		filteredMatches.append(filteredMatchesData);
-		filteredMatchesData.append(jQuery("<h2></h2>").text("Other Routes Here:").addClass("service"));
-		filteredMatchesData.append("<ul></ul>");
+             jQuery.each(alertData[stopId], function (_, ptSituationElement) {
+                 if (ptSituationElement.Affects.hasOwnProperty('StopPoints')) {
+                     jQuery.each(ptSituationElement.Affects.StopPoints.AffectedStopPoint, function (_, affectedStopPoint) {
+                         var stopPointRef = affectedStopPoint.StopPointRef;
+                         if (stopId == stopPointRef) {
+                             serviceAlertList.append('<li>' + ptSituationElement.Description + '</li>');
+                         }
+                     });
+                 }
+             });
 
-		jQuery.each(stopResult.routesAvailable, function(_, route) {
-			if (filterExistsInResults && route.shortName !== routeFilter) {
-				var filteredMatch = jQuery("<li></li>").addClass("filtered-match");
-				var link = jQuery('<a href="#' + stopResult.id.match(/\d*$/) + '%20' + route.shortName + '"><span class="route-name">' + route.shortName + '</span></a>');
-				link.appendTo(filteredMatch);
-				filteredMatches.find("ul").append(filteredMatch);
-				return true; //continue
-			}
+             var serviceAlertContainer = jQuery("<div></div>")
+                 .addClass("popupServiceAlertContainer")
+                 .append(serviceAlertHeader)
+                 .append(serviceAlertList);
 
-			jQuery.each(route.directions, function(__, direction) {
-				if(direction.hasUpcomingScheduledService === false) {
-					routeAndDirectionWithoutSerivce[route.id + "_" + direction.directionId] = { "id":route.id, "shortName":route.shortName, "destination":direction.destination };
-					routeAndDirectionWithoutSerivceCount++;
-				} else {
-					routeAndDirectionWithoutArrivals[route.id + "_" + direction.directionId + "_" + direction.destination.hashCode()] = { "id":route.id, "shortName":route.shortName, "destination":direction.destination };
-					routeAndDirectionWithoutArrivalsCount++;
-				}
-			});
-			totalRouteCount++;
-		});
+             html += serviceAlertContainer[0].outerHTML;
 
-		// ...now those with and without arrivals
-		var visits = siri.Siri.ServiceDelivery.StopMonitoringDelivery[0].MonitoredStopVisit;
-		jQuery.each(visits, function(_, monitoredJourney) {
-			var routeId = monitoredJourney.MonitoredVehicleJourney.LineRef;
-			var routeShortName = monitoredJourney.MonitoredVehicleJourney.PublishedLineName;
+         }
 
-			if (filterExistsInResults && routeShortName !== routeFilter) {
-				return true; //continue
-			}
+         var routeAndDirectionWithArrivals = {};
+         var routeAndDirectionWithArrivalsCount = 0;
+         var routeAndDirectionWithoutArrivals = {};
+         var routeAndDirectionWithoutArrivalsCount = 0;
+         var routeAndDirectionWithoutSerivce = {};
+         var routeAndDirectionWithoutSerivceCount = 0;
+         var totalRouteCount = 0;
 
-			var directionId = monitoredJourney.MonitoredVehicleJourney.DirectionRef;
-			var destinationNameHash = monitoredJourney.MonitoredVehicleJourney.DestinationName.hashCode();
+         var filterExistsInResults = false;
 
-			if(typeof routeAndDirectionWithArrivals[routeId + "_" + directionId + "_" + destinationNameHash] === 'undefined') {
-				routeAndDirectionWithArrivals[routeId + "_" + directionId + "_" + destinationNameHash] = [];
-				delete routeAndDirectionWithoutArrivals[routeId + "_" + directionId + "_" + destinationNameHash];
-				routeAndDirectionWithoutArrivalsCount--;
-			}
+         jQuery.each(stopResult.routesAvailable, function(_, routeResult) {
+             if (routeResult.shortName === routeFilter) {
+                 filterExistsInResults = true;
+                 return false;
+             }
+         });
 
-			routeAndDirectionWithArrivals[routeId + "_" + directionId + "_" + destinationNameHash].push(monitoredJourney.MonitoredVehicleJourney);
-			routeAndDirectionWithArrivalsCount++;
-		});	    
+         // break up routes here between those with and without service
+         var filteredMatches = jQuery("<div></div>");
+         var filteredMatchesData = jQuery('<div></div>').addClass("popup-filtered-matches");
+         filteredMatches.append(filteredMatchesData);
+         filteredMatchesData.append(jQuery("<h2></h2>").text("Other Routes Here:").addClass("service"));
+         filteredMatchesData.append("<ul></ul>");
 
-		// service available
-		var maxObservationsToShow = 3;
-		if(totalRouteCount > 5) {
-			maxObservationsToShow = 1;
-		} else if(totalRouteCount > 3) {
-			maxObservationsToShow = 2;
-		}	
+         jQuery.each(stopResult.routesAvailable, function(_, route) {
+             if (filterExistsInResults && route.shortName !== routeFilter) {
+                 var filteredMatch = jQuery("<li></li>").addClass("filtered-match");
+                 var link = jQuery('<a href="' + OBA.Config.searchParamsPrefix + OBA.Util.displayStopId(stopResult.id) + '%20' + route.shortName + '"><span class="route-name">' + route.shortName + '</span></a>');
+                 link.appendTo(filteredMatch);
+                 filteredMatches.find("ul").append(filteredMatch);
+                 return true; //continue
+             }
 
-		if(routeAndDirectionWithArrivalsCount > 0) {
-			html += '<p class="service">Buses en-route:</p>';
+             jQuery.each(route.directions, function(__, direction) {
+                 if(direction.hasUpcomingScheduledService === false) {
+                     routeAndDirectionWithoutSerivce[route.id + "_" + direction.directionId] = { "id":route.id, "shortName":route.shortName, "destination":direction.destination };
+                     routeAndDirectionWithoutSerivceCount++;
+                 } else {
+                     routeAndDirectionWithoutArrivals[route.id + "_" + direction.directionId + "_" + (direction.destination!=null)? direction.destination.hashCode(): "--" ] = { "id":route.id, "shortName":route.shortName, "destination":direction.destination };
+                     routeAndDirectionWithoutArrivalsCount++;
+                 }
+             });
+             totalRouteCount++;
+         });
 
-			jQuery.each(routeAndDirectionWithArrivals, function(_, mvjs) {
-				var mvj = mvjs[0];
+         // ...now those with and without arrivals
+         var visits = siri.Siri.ServiceDelivery.StopMonitoringDelivery[0].MonitoredStopVisit;
+         jQuery.each(visits, function(_, monitoredJourney) {
+             var routeId = monitoredJourney.MonitoredVehicleJourney.LineRef;
+             var routeShortName = monitoredJourney.MonitoredVehicleJourney.PublishedLineName;
 
-				html += '<ul>';
+             if (filterExistsInResults && routeShortName !== routeFilter) {
+                 return true; //continue
+             }
 
-				html += '<li class="route">';
-				html += '<a href="#' + stopIdWithoutAgency + '%20' + mvj.PublishedLineName + '"><span class="route-name">' + mvj.PublishedLineName + "</span>&nbsp;&nbsp; " + mvj.DestinationName + '</a>';
-				if (mvj.LineRef in alertData) {
-					html += ' <a id="alert-link|' + stopIdWithoutAgency + '|' + mvj.LineRef + '|' + mvj.PublishedLineName + '" class="alert-link" href="#">Alert</a>';
-				}
-				html += '</li>';
+             var directionId = monitoredJourney.MonitoredVehicleJourney.DirectionRef;
+             var destinationNameHash ="--"
+             if(monitoredJourney.MonitoredVehicleJourney.DestinationName!=null)
+            	 var destinationNameHash = monitoredJourney.MonitoredVehicleJourney.DestinationName.hashCode();
 
-				jQuery.each(mvjs, function(_, monitoredVehicleJourney) {
-					if(_ >= maxObservationsToShow) {
-						return false;
-					}
+             if(typeof routeAndDirectionWithArrivals[routeId + "_" + directionId + "_" + destinationNameHash] === 'undefined') {
+                 routeAndDirectionWithArrivals[routeId + "_" + directionId + "_" + destinationNameHash] = [];
+                 delete routeAndDirectionWithoutArrivals[routeId + "_" + directionId + "_" + destinationNameHash];
+                 routeAndDirectionWithoutArrivalsCount--;
+             }
 
-					if(typeof monitoredVehicleJourney.MonitoredCall !== 'undefined') {
-						
-						// Scheduled Departure Text
-						var layoverSchedDepartureText = "";
-						var layoverLateDepartureText = " <span class='not_bold'>(at terminal)</span>";
-						var prevTripSchedDepartureText = "";
-						var prevTripLateDepartureText = " <span class='not_bold'>(+ scheduled layover at terminal)</span>";
-						
-						var distance = monitoredVehicleJourney.MonitoredCall.Extensions.Distances.PresentableDistance;
+             // append RecordedAtTime to mvj so we know the age of the record, not just the age of the update
+             monitoredJourney.MonitoredVehicleJourney["RecordedAtTime"] = OBA.Util.ISO8601StringToDate(monitoredJourney.RecordedAtTime).getTime();
+             routeAndDirectionWithArrivals[routeId + "_" + directionId + "_" + destinationNameHash].push(monitoredJourney.MonitoredVehicleJourney);
+             routeAndDirectionWithArrivalsCount++;
+         });
 
-						var timePrediction = null;
-						if(typeof monitoredVehicleJourney.MonitoredCall.ExpectedArrivalTime !== 'undefined' 
-							&& monitoredVehicleJourney.MonitoredCall.ExpectedArrivalTime !== null) {
-							timePrediction = OBA.Util.getArrivalEstimateForISOString(
-									monitoredVehicleJourney.MonitoredCall.ExpectedArrivalTime, 
-									updateTimestampReference);
+
+             // Maximum Upcoming Vehicles to Display
+             var maxObservationsToShow = 3;
+             if((totalRouteCount - routeAndDirectionWithoutArrivalsCount) > 4) {
+                 maxObservationsToShow = 2;
+             }
+
+             // service available
+             if(routeAndDirectionWithArrivalsCount > 0) {
+                 html += '<p class="service">'+((dictionary!=undefined && dictionary!=null)?getValueFor('js.busesenroute'): 'Buses en-route')+':</p>';
+
+                 jQuery.each(routeAndDirectionWithArrivals, function(_, mvjs) {
+                     var mvj = mvjs[0];
+
+                     html += '<ul>';
+
+                     html += '<li class="route">';
+                     html += '<a href="' + OBA.Config.searchParamsPrefix + uniqueStopId + '%20' + mvj.PublishedLineName + '"><span class="route-name">' + mvj.PublishedLineName + "</span>&nbsp;&nbsp; " + mvj.DestinationName + '</a>';
+                     if(mvj.Monitored)
+                     if (mvj.LineRef in alertData) {
+                         html += ' <a id="alert-link|' + uniqueStopId + '|' + mvj.LineRef + '|' + mvj.PublishedLineName + '" class="alert-link" href="#">Alert</a>';
+                     }
+                     html += '</li>';
+
+                     jQuery.each(mvjs, function(_, monitoredVehicleJourney) {
+                         if(_ >= maxObservationsToShow) {
+                             return false;
+                         }
+
+                         var hasRealtime = monitoredVehicleJourney.Monitored
+
+                         if(typeof monitoredVehicleJourney.MonitoredCall !== 'undefined') {
+                             var distance = monitoredVehicleJourney.MonitoredCall.Extensions.Distances.PresentableDistance;
+
+                             var timePrediction = null;
+                             var expectedArrivalTime = null;
+                             if(typeof monitoredVehicleJourney.MonitoredCall.ExpectedArrivalTime !== 'undefined'
+                                 && monitoredVehicleJourney.MonitoredCall.ExpectedArrivalTime !== null) {
+                                 timePrediction = OBA.Util.getArrivalEstimateForISOString(
+                                         monitoredVehicleJourney.MonitoredCall.ExpectedArrivalTime,
+                                         monitoredVehicleJourney.RecordedAtTime/*synthetic property*/);
+                                 expectedArrivalTime =
+									 OBA.Util.ISO8601StringToDate(monitoredVehicleJourney.MonitoredCall.ExpectedArrivalTime).format(dateFormat.masks.shortTime);
 						}
 
 						var wrapped = false;
 						if(typeof monitoredVehicleJourney.ProgressStatus !== 'undefined' 
-							&& monitoredVehicleJourney.ProgressStatus.indexOf("prevTrip") !== -1) {
+							&& monitoredVehicleJourney.ProgressStatus.indexOf("prevTrip") !== -1 && hasRealtime) {
 							wrapped = true;
 						}
 
@@ -475,83 +588,72 @@ OBA.Popups = (function() {
 							&& monitoredVehicleJourney.ProgressStatus.indexOf("layover") !== -1) {
 							layover = true;
 						}
-						
-						var prevTrip = false;
-						if(typeof monitoredVehicleJourney.ProgressStatus !== 'undefined' 
-							&& monitoredVehicleJourney.ProgressStatus.indexOf("prevTrip") !== -1) {
-							prevTrip = true;
-						}
 
 						var stalled = false;
 						if(typeof monitoredVehicleJourney.ProgressRate !== 'undefined' 
 							&& monitoredVehicleJourney.ProgressRate === "noProgress") {
 							stalled = true;
 						}
+
+                        var vehicleType = monitoredVehicleJourney.VehicleMode[0];
+
+						var arrival = 'arrival arrival_' + vehicleType;
 						
-						var mvjDepartureTimeAsText = monitoredVehicleJourney.OriginAimedDepartureTime,
-							departureTimeAsDateTime = null;
-						
-						var isDepartureTimeAvailable = false;
-						var isDepartureOnSchedule = false;
-						
-						if(typeof mvjDepartureTimeAsText !== 'undefined'){
-							isDepartureTimeAvailable = true;
-							departureTimeAsDateTime = OBA.Util.ISO8601StringToDate(mvjDepartureTimeAsText);
-							isDepartureOnSchedule = departureTimeAsDateTime && departureTimeAsDateTime.getTime() >= updateTimestampReference;
-							
-							layoverSchedDepartureText = " <span class='not_bold'>(at terminal, scheduled to depart at " + departureTimeAsDateTime.format("h:MM TT") + ")</span>";
-							prevTripSchedDepartureText = " <span class='not_bold'>(+layover, scheduled to depart terminal at " + departureTimeAsDateTime.format("h:MM TT") + ")</span>";	
+						// Alert if Realtime data is unavailable
+						if(typeof hasRealtime === 'undefined' || hasRealtime === null || hasRealtime == false){
+							distance += '<span class="scheduleAlert"><span class="not_bold"> ('+getValueFor('using.schedule.time')+')</span></span>';
+							arrival = 'arrival_schedule arrival_schedule_' + vehicleType;
+						}
+						// If realtime data is available and config is set, add vehicleID
+						else if (OBA.Config.showVehicleIdInStopPopup == "true"){
+							var vehicleId = monitoredVehicleJourney.VehicleRef.split("_")[1];
+							distance += '<span class="vehicleId"> (#' + vehicleId + ')</span>';
 						}
 
 						// time mode
-						if(timePrediction != null && !layover) {
-							timePrediction += ", " + distance;
-							if(isDepartureTimeAvailable){
-								if(layover === true) {
-									if(isDepartureOnSchedule){
-										timePrediction += layoverSchedDepartureText;
-									}else{
-										timePrediction += layoverLateDepartureText;
-									}
-								}
-								else if(prevTrip === true){
-									if(isDepartureOnSchedule){
-										timePrediction += prevTripSchedDepartureText;
-									} else {
-										timePrediction += prevTripLateDepartureText;
-									}
-								}
+						if(timePrediction != null && stalled === false) {
+							if (expectedArrivalTime != null && OBA.Config.showExpectedArrivalTimeInStopPopup == "true") {
+                                timePrediction += ', ' + expectedArrivalTime;
+                        	}
+							if(wrapped === false) {
+								timePrediction += ", " + distance;
 							}
-
+							
 							var lastClass = ((_ === maxObservationsToShow - 1 || _ === mvjs.length - 1) ? " last" : "");
-							html += '<li class="arrival' + lastClass + '">' + timePrediction + '</li>';
+							html += '<li class="' + arrival + lastClass + '">' + timePrediction + '</li>';
 
 						// distance mode
 						} else {
-							if(isDepartureTimeAvailable){
-								if(layover === true) {
-									if(isDepartureOnSchedule) {
-										distance += layoverSchedDepartureText;
+							if(layover === true) {
+								if(typeof monitoredVehicleJourney.OriginAimedDepartureTime !== 'undefined') {
+									var departureTime = OBA.Util.ISO8601StringToDate(monitoredVehicleJourney.OriginAimedDepartureTime);
+
+									if(departureTime.getTime() < updateTimestampReference) {
+										distance += " <span class='not_bold'>(at terminal)</span>";
 									} else {
-										distance += layoverLateDepartureText;
+										distance += " <span class='not_bold'>(at terminal, scheduled to depart " + departureTime.format("h:MM TT") + ")</span>";
 									}
-								} 
-								else if(prevTrip == true) {
-									if(isDepartureOnSchedule){
-										distance += prevTripSchedDepartureText;
+								} else {
+									// here we want to use the time prediction if we have it (counter to what the MTA does)
+									// we also ignore stalled as the time prediction will account for that
+									if (timePrediction != null) {
+										distance = timePrediction + ", " + distance + " <span class='not_bold'>(at terminal)</span>";	
 									} else {
-										distance += prevTripLateDepartureText;
+										distance += " <span class='not_bold'>(at terminal)</span>";
 									}
 								}
+							} else if(wrapped === true) {
+								distance += " <span class='not_bold'>(+ scheduled layover at terminal)</span>";
 							}
-
+								
 							var lastClass = ((_ === maxObservationsToShow - 1 || _ === mvjs.length - 1) ? " last" : "");
-							html += '<li class="arrival' + lastClass + '">' + distance + '</li>';
+							html += '<li class="' + arrival + lastClass + '">' + distance + '</li>';
 						}
 					}
 				});
 			});
 		}
+		
 
 		if(routeAndDirectionWithoutArrivalsCount > 0) {
 			html += '<p class="service muted">No buses en-route to this stop for:</p>';
@@ -579,27 +681,28 @@ OBA.Popups = (function() {
 			var i = 0;
 			jQuery.each(routeAndDirectionWithoutSerivce, function(_, d) {
 				html += '<li class="route">';
-				html += '<a class="muted" href="#' + stopIdWithoutAgency + "%20" + d.shortName + '"><span class="route-name">' + d.shortName + '</span></a>';
-				html += '</li>';
-
+				html += '<a class="muted" href="' + OBA.Config.searchParamsPrefix + stopCode + "%20" + d.shortName + '"><span class="route-name">' + d.shortName + '</span></a>';
+                html += '</li>';
+				
 				i++;
 			});
 			html += '</ul>';
 		}
-
+		
 		// filtered out roues
 		if (filteredMatches.find("li").length > 0) {
-			var showAll = jQuery("<li></li>").addClass("filtered-match").html('<a href="#' + stopResult.id.match(/\d*$/) + '"><span class="route-name">See&nbsp;All</span></a>');
-			filteredMatches.find("ul").append(showAll);
+			var showAll = jQuery("<li></li>").addClass("filtered-match").html('<a href="' + OBA.Config.searchParamsPrefix + OBA.Util.displayStopId(stopResult.id) + '"><span class="route-name">See&nbsp;All</span></a>');
+            filteredMatches.find("ul").append(showAll);
 			html += filteredMatches.html();
 		}
 
-		html += OBA.Config.infoBubbleFooterFunction("stop", stopIdWithoutAgency);	        
+		if (OBA.Config.includeBubbleFooter)
+			html += OBA.Config.infoBubbleFooterFunction("stop", stopCode);
 
 		html += "<ul class='links'>";
-		html += "<a href='#' id='zoomHere'>Center & Zoom Here</a>";
+		html += "<a href='#' id='zoomHere'>"+((dictionary!=undefined && dictionary!=null)?getValueFor('js.centerZoom'): 'Center & Zoom Here')+"</a>&nbsp;&nbsp;&nbsp;<a href='" + OBA.Config.urlPrefix + "where/schedule?id=" + stopResult.id +"' id='schedule'>"+((dictionary!=undefined && dictionary!=null)?getValueFor('js.viewSchedule'): 'View Schedule')+"</a>";
 		html += "</ul>";
-
+		
 		// (end popup)
 		html += '</div>';
 
@@ -616,18 +719,18 @@ OBA.Popups = (function() {
 		marker.setOpacity(1);
 
 		activateAlertLinks(content);
-
+		
 		(stopBubbleListener !== null)? stopBubbleListener.triggerHandler(stopBubbleTrigger) : null;
 
 		return content.get(0);
 	}
-
+	
 	function registerStopBubbleListener(obj, trigger) {
 		stopBubbleListener = obj;
 		stopBubbleTrigger = trigger;
 		return stopBubbleListener;
 	}
-
+	
 	function unregisterStopBubbleListener() {
 		stopBubbleListener = null;
 		stopBubbleTrigger = null;
@@ -637,6 +740,7 @@ OBA.Popups = (function() {
 	//////////////////// CONSTRUCTOR /////////////////////
 	// timer to update data periodically 
 	setInterval(function() {
+	
 		if(popup !== null && typeof popup.refreshFn === 'function') {
 			popup.refreshFn();
 		}
@@ -644,6 +748,8 @@ OBA.Popups = (function() {
 
 	// updates timestamp in popup bubble every second
 	setInterval(function() {
+		console.log(popup);
+		console.log(___id);
 		if(popup !== null && typeof popup.updateTimestamp === 'function') {
 			popup.updateTimestamp();
 		}
@@ -651,6 +757,7 @@ OBA.Popups = (function() {
 
 	return {
 		reset: function() {
+			console.log("RESET");
 			closePopup();
 		},
 
@@ -661,7 +768,7 @@ OBA.Popups = (function() {
 				return null;
 			}
 		},
-
+		
 		// WAYS TO CREATE/DISPLAY A POPUP
 		showPopupWithContent: showPopupWithContent, 
 

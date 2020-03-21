@@ -20,7 +20,7 @@
 	xmlns:wiki="/oba-wiki-tags">
 
 	<h3>
-			<s:i18n name='onebusaway-enterprise'><s:text name='did.you.mean'/></s:i18n>
+			<oba:message key='did.you.mean'/>
 	</h3>
 		
 	<div class="routeList">

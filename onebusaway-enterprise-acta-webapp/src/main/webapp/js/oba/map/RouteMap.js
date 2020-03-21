@@ -873,6 +873,13 @@ OBA.RouteMap = function(mapNode, initCallbackFn, serviceAlertCallbackFn) {
 
 		unregisterStopBubbleListener: function() {
 			return OBA.Popups.unregisterStopBubbleListener();
+		},
+		
+		setup: function() {
+			// start adding things to map once it's ready...
+			if(typeof initCallbackFn === 'function') {
+				initCallbackFn();
+			}
 		}
 	};
 };

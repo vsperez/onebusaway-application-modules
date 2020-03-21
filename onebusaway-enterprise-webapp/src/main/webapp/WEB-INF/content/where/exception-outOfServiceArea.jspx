@@ -16,9 +16,11 @@
     limitations under the License.
 
 -->
-<html xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:s="/struts-tags">
+<html xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:s="/struts-tags" 
+xmlns:oba="/oba-tags">
 <jsp:directive.page contentType="text/html" />
 <head>
+
 </head>
 <body>
 
@@ -27,7 +29,8 @@
 
 <s:push value="exception">
 
-<h3 class="warning"><s:i18n name='onebusaway-enterprise'><s:text name='out.of.service.area'/></s:i18n></h3>
+
+<h3 class="warning"><oba:message key='out.of.service.area'/></h3>
 
 </s:push>
 

@@ -189,9 +189,9 @@
 			<div id="available-routes"><a href="${url}">Click here_1_</a> for a list of available routes.</div>
 		   
 			<div id="cant-find">
-				<h2>Can't find your bus route?</h2>
+				<h2><oba:message key="cant.find"/></h2>
 				<s:url var="url" namespace="/routes" action="index" />
-				<p><s:property value="getText('main.cantfindroute.text')" /> <a href="${url}">Click here</a> to see which routes are currently available.</p>
+				<p><oba:message key="main.cantfindroute.text" /><a href="${url}">Click here</a> to see which routes are currently available.</p>
 			</div>
 			
 			<s:if test="globalServiceAlerts!=null">

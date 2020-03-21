@@ -17,6 +17,8 @@
 var OBA = window.OBA || {};
 
 OBA.RouteMap = function(mapNode, initCallbackFn, serviceAlertCallbackFn) {	
+	
+	var initialized = false;
 
 	var map = null;
 
@@ -104,6 +106,7 @@ OBA.RouteMap = function(mapNode, initCallbackFn, serviceAlertCallbackFn) {
 
 	// STOPS
 	function removeStops(preserveStopsInView) {
+		console.log("removeStops")
 		jQuery.each(stopsById, function(_, marker) {
 			var stopId = marker.stopId;
 			/*if(stopId === OBA.Popups.getPopupStopId()) {
@@ -136,7 +139,21 @@ OBA.RouteMap = function(mapNode, initCallbackFn, serviceAlertCallbackFn) {
 			if(directionKey === null) {
 				directionKey = "unknown";
 			}
-			var icon = new L.Icon({iconUrl: "img/stop/stop-" + directionKey + ".png",	iconSize: [21, 21]});
+			var stopsOnRoute = [];
+			if (typeof jQuery("body").data("savedData") === 'undefined' && jQuery("body").data("savedData") != null)
+			stopsOnRoute = jQuery("body").data("savedData").stops;
+
+       		 var onRoute = false;
+			jQuery.each(stopsOnRoute, function(_, stopOnRoute) {
+			if (String(stopOnRoute) === String(stop.id)) {
+				onRoute = true;
+			}
+      		  });
+      		var iconUrl=OBA.Config.urlPrefix +"img/realtime/stop/stop-"+ directionKey + ".png";
+			if (onRoute === false) {
+				var iconUrl= OBA.Config.urlPrefix +"img/realtime/stop/stop-off-route-"+ directionKey + ".png";
+			}
+			var icon = new L.Icon({iconUrl: iconUrl,	iconSize: [21, 21]});
 			var defaultOpacity = (map.getZoom() < 16) ? 0 : 1;
 			var markerOptions = {
 				icon: icon,
@@ -169,10 +186,10 @@ OBA.RouteMap = function(mapNode, initCallbackFn, serviceAlertCallbackFn) {
 		if(typeof vehiclesByRoute[routeId] === 'undefined') {
 			vehiclesByRoute[routeId] = {};
 		}
-		
-		var routeIdParts = routeId.split("_");
-		var agencyId = routeIdParts[0];
-		var routeIdWithoutAgency = routeIdParts[1];
+
+		var underscoreIndex = routeId.indexOf("_");//only the first "_" should be considered
+		var agencyId = routeId.substr(0, underscoreIndex);
+		var routeIdWithoutAgency = routeId.substr(underscoreIndex + 1);
 		
 		var params = { OperatorRef: agencyId, LineRef: routeIdWithoutAgency };		
 
@@ -195,18 +212,24 @@ OBA.RouteMap = function(mapNode, initCallbackFn, serviceAlertCallbackFn) {
 			
 			// service delivery
 			var vehiclesByIdInResponse = {};
+			if (json.Siri.ServiceDelivery.VehicleMonitoringDelivery[0].VehicleActivity != undefined) {
 			jQuery.each(json.Siri.ServiceDelivery.VehicleMonitoringDelivery[0].VehicleActivity, function(_, activity) {
 				var latitude = activity.MonitoredVehicleJourney.VehicleLocation.Latitude;
 				var longitude = activity.MonitoredVehicleJourney.VehicleLocation.Longitude;
 				var orientation = activity.MonitoredVehicleJourney.Bearing;
 				var headsign = activity.MonitoredVehicleJourney.DestinationName;
 				var routeName = activity.MonitoredVehicleJourney.PublishedLineName;
-
+				 var hasRealtime = activity.MonitoredVehicleJourney.Monitored;
 				var vehicleId = activity.MonitoredVehicleJourney.VehicleRef;
 				var vehicleIdParts = vehicleId.split("_");
+				
+				     var tripId = activity.MonitoredVehicleJourney.FramedVehicleJourneyRef.DatedVehicleJourneyRef;
+				
 				var vehicleIdWithoutAgency = vehicleIdParts[1];
 				var marker = vehiclesById[vehicleId];
-				
+				 var vehicleType = activity.MonitoredVehicleJourney.VehicleMode[0];
+				 var newMarker = false;
+				 var markerImage = 'img/realtime/' + vehicleType + '/' + vehicleType + '-';
 				// has route been removed while in the process of updating?
 				if(typeof vehiclesByRoute[routeId] === 'undefined') {
 					return false;
@@ -222,6 +245,7 @@ OBA.RouteMap = function(mapNode, initCallbackFn, serviceAlertCallbackFn) {
 						routeId: routeId
 					};
 
+				   newMarker = true;
 					marker = new L.Marker([latitude, longitude], markerOptions);
 					marker.addTo(map);
 			        
@@ -229,7 +253,7 @@ OBA.RouteMap = function(mapNode, initCallbackFn, serviceAlertCallbackFn) {
 			    		OBA.Config.analyticsFunction("Vehicle Marker Click", vehicleIdWithoutAgency);
 
 		    		OBA.Popups.showPopupWithContentFromRequest(map, this, OBA.Config.siriVMUrl + "&callback=?", 
-		    				{ OperatorRef: agencyId, VehicleRef: vehicleIdWithoutAgency, MaximumNumberOfCallsOnwards: "3", VehicleMonitoringDetailLevel: "calls" }, 
+		    				{ OperatorRef: agencyId, VehicleRef: vehicleIdWithoutAgency, MaximumNumberOfCallsOnwards: "3", VehicleMonitoringDetailLevel: "calls" ,TripId: tripId}, 
 		    				OBA.Popups.getVehicleContentForResponse, null);
 			    	});
 				} else{
@@ -241,8 +265,12 @@ OBA.RouteMap = function(mapNode, initCallbackFn, serviceAlertCallbackFn) {
 				if(orientation !== null && orientation !== 'NaN') {
 					orientationAngle = Math.floor(orientation / 5) * 5;
 				}
-				var icon = new L.Icon({iconUrl: "img/vehicle/vehicle-" + orientationAngle + ".png", iconSize: [51, 51]});
-
+				
+				var icon = new L.Icon({iconUrl:OBA.Config.urlPrefix + "img/realtime/"+ vehicleType + '/' + vehicleType +"-" + orientationAngle + ".png", iconSize: [51, 51]});
+				 if (typeof hasRealtime === 'undefined' || hasRealtime === null || hasRealtime == false) {
+					 icon= new L.Icon({iconUrl:OBA.Config.urlPrefix +'img/scheduled/' + vehicleType + '/' + vehicleType + '-' +orientationAngle +".png", iconSize: [51, 51]});
+                      //markerImage = OBA.Config.urlPrefix + 'img/scheduled/' + vehicleType + '/' + vehicleType + '-';
+                 }
 				marker.setIcon(icon);
 				
 				// position
@@ -256,6 +284,7 @@ OBA.RouteMap = function(mapNode, initCallbackFn, serviceAlertCallbackFn) {
 				vehiclesByRoute[routeId][vehicleId] = marker;
 				vehiclesById[vehicleId] = marker; 
 			});
+			}
 			
 			// remove vehicles from map that are no longer in the response, for all routes in the query
 			jQuery.each(vehiclesById, function(vehicleOnMap_vehicleId, vehicleOnMap) {
@@ -274,6 +303,127 @@ OBA.RouteMap = function(mapNode, initCallbackFn, serviceAlertCallbackFn) {
 			});
 		});
 	}
+	
+    function tryAnimateAlongShape(vehicleId, routeId, marker, oldPosition, newPosition) {
+        if (typeof polylinesByRoute[routeId] === 'undefined')
+            return false;
+
+        var polylines = polylinesByRoute[routeId];
+        if (polylines.length == 0)
+            return false;
+
+        for (var i = 0; i < polylines.length; i++) {
+            var polyline = polylines[i];
+
+            // if we don't find a result within this threshold, we can't trust the results
+            var startIndex = findClosestPoint(oldPosition, polyline.getPath(), 10);
+            var endIndex = findClosestPoint(newPosition, polyline.getPath(), 10);
+
+            if (startIndex >= 0 && endIndex >= 0 && endIndex > startIndex) {
+                // animate startIndex up to endIndex
+                var index = startIndex;
+
+                var distances = [0];
+                var maxDistance = 0;
+                for (var j = startIndex + 1; j < endIndex; j++) {
+                    var dist = haversine(polyline.getPath().getAt(j - 1), polyline.getPath().getAt(j));
+                    maxDistance += dist;
+                    distances.push(dist);
+                }
+                var durations = distances.map(function (d) {
+                    return (d / maxDistance) * 1000
+                });
+
+                function step() {
+                    if (index > endIndex)
+                        return;
+                    var pos = polyline.getPath().getAt(index);
+                    var duration = durations[index - startIndex];
+                    marker.animateTo(pos, {"duration": duration, "complete": step, "easing": "linear"});
+                    index++;
+                }
+
+                index++;
+                step();
+
+                //make sure marker ends at the correct final position no matter what happened along the way
+                marker.setPosition(newPosition);
+
+                return true;
+            } else if (startIndex >= 0 && endIndex >= 0 && endIndex < startIndex) {
+                // animate startIndex downto endIndex
+                var index = startIndex;
+
+                var distances = [0];
+                var maxDistance = 0;
+                for (var j = startIndex - 1; j > endIndex; j--) {
+                    var dist = haversine(polyline.getPath().getAt(j - 1), polyline.getPath().getAt(j));
+                    maxDistance += dist;
+                    distances.push(dist);
+                }
+                var durations = distances.map(function (d) {
+                    return (d / maxDistance) * 1000
+                });
+
+                function step() {
+                    if (index < endIndex)
+                        return;
+                    var pos = polyline.getPath().getAt(index);
+                    var duration = durations[index - startIndex];
+                    marker.animateTo(pos, {"duration": duration, "complete": step, "easing": "linear"});
+                    index--;
+                }
+
+                index--;
+                step();
+
+                //make sure marker ends at the correct final position no matter what happened along the way
+                marker.setPosition(newPosition);
+
+                return true;
+
+			}
+
+        }
+
+        return false;
+    }
+
+    function findClosestPoint(point, line, threshold) {
+
+        var minDistance = Number.MAX_VALUE;
+        var closestIndex = -1;
+
+        line.forEach(function (p, i) {
+            var distance = haversine(point, p);
+            if (distance < threshold && distance < minDistance) {
+                minDistance = distance;
+                closestIndex = i;
+            }
+        });
+
+        return closestIndex;
+    }
+
+    // adapted from https://github.com/njj/haversine
+    function haversine(start, end) {
+        var R = 6371000; // radius of the earth in meters
+
+        var toRad = function (num) {
+            return num * Math.PI / 180
+        };
+
+        var dLat = toRad(end.lat() - start.lat());
+        var dLon = toRad(end.lng() - start.lng());
+        var lat1 = toRad(start.lat());
+        var lat2 = toRad(end.lng());
+
+        var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2)
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        return R * c;
+    }
 	
 	function removeVehicles(routeId) {
 		if(typeof vehiclesByRoute[routeId] !== 'undefined') {
@@ -318,9 +468,52 @@ OBA.RouteMap = function(mapNode, initCallbackFn, serviceAlertCallbackFn) {
 		highlightedStop = null;
 	}
 
+	function showLegend(map) {
+		if(map==null || document.getElementById('legend')==undefined)
+			return;
+	 	var iconBase = OBA.Config.urlPrefix + 'img/';
+	        var icons = {
+	          realtime: {
+	        	
+	        		
+	            name: ((dictionary!=undefined && dictionary!=null)?getValueFor('js.realtime'): 'Real-Time'),
+	            icon: iconBase + 'realtime/bus/bus.png'
+	          },
+	          scheduled: {
+	            name: ((dictionary!=undefined && dictionary!=null)?getValueFor('js.scheduled'): 'Scheduled'),
+	            icon: iconBase + 'scheduled/bus/bus.png'
+	          }
+	        };
+	        
+	        var legend = document.getElementById('legend');
+	        for (var key in icons) {
+	          var type = icons[key];
+	          var name = type.name;
+	          var icon = type.icon;
+	          var div = document.createElement('div');
+	          div.innerHTML = '<img src="' + icon + '"> ' + '<span>' + name + '</span>';
+	          if (legend) legend.appendChild(div);
+	        }
+	        console.log("ADD LEGEND");
+	        var info = L.control();
+	        console.log("CONTROL LEGEND");
+	        info.onAdd = function (map) {
+	        	 console.log("ONADD ");
+	        	 console.log(legend );
+	        	return  legend;
+	        }
+	        console.log("PREADD");
+	        info.addTo(map);
+	        console.log("POST");
+	        //map.controls[google.maps.ControlPosition.RIGHT_TOP].push(legend);
+	}
+		
 	//////////////////// CONSTRUCTOR /////////////////////
 	map = new OBA.LeafletMapWrapper(document.getElementById("map"));
-	
+	console.log(map);
+	if(initialized === false) {
+		initialized = true;
+	}
 	// If there is no configured map center and zoom...
 	// Zoom/pan the map to the area specified from our configuration JavaScript that gets its
 	// values from the server dynamically on page load.
@@ -330,7 +523,20 @@ OBA.RouteMap = function(mapNode, initCallbackFn, serviceAlertCallbackFn) {
 		var bounds = new L.LatLngBounds(swCorner, neCorner);
 		map.fitBounds(bounds);
 	}
-	
+	map.addEventListener('load moveend', function(e) { 
+		if(initialized === false) {
+			initialized = true;
+			
+		showLegend(map);
+
+
+			
+			if(typeof initCallbackFn === 'function') {
+				initCallbackFn();
+			}
+		}
+		
+	});
 	// refresh the stops on the map after the user is done panning
 	map.addEventListener("moveend", function() {
 		// request list of stops in viewport when user stops moving map
@@ -376,7 +582,7 @@ OBA.RouteMap = function(mapNode, initCallbackFn, serviceAlertCallbackFn) {
 			if(directionKey === null) {
 				directionKey = "unknown";
 			}
-			var highlightedIcon = new L.Icon({iconUrl: "img/stop/stop-" + directionKey + "-active.png", iconSize: [21, 21]});
+			var highlightedIcon = new L.Icon({iconUrl: "img/realtime/stop/stop-" + directionKey + "-active.png", iconSize: [21, 21]});
 			
 			stopMarker.options.previousIcon = stopMarker.options.icon;
 			stopMarker.setIcon(highlightedIcon);

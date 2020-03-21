@@ -36,13 +36,6 @@
 		<s:param name="v"><s:property value="frontEndVersion" /></s:param>
 	</s:url>
 	<link rel="stylesheet" href="${url}" type="text/css" media="screen,print"/>
-<s:url var="url" value="/css/map/leaflet.css">
-	<s:param name="v">
-		<s:property value="frontEndVersion" />
-	</s:param>
-</s:url>
-<link rel="stylesheet" href="${url}" type="text/css"
-	media="screen,print" />
 
 
 	<s:url var="url" value="/js/oba/obai18n.js">
@@ -82,11 +75,8 @@ dictionary.set('schedule.data',"<oba:message key='schedule.data'/>");
 dictionary.set('using.schedule.time',"<oba:message key='using.schedule.time'/>");
 dictionary.set('routes', "<oba:message key='routes'/>");
 dictionary.set('routes.available', "<oba:message key='routes.available'/>");
-dictionary.set('show.map', "<oba:message key='show.map'/>");
-dictionary.set('hide.map', "<oba:message key='hide.map'/>");
 
 </script>
-<s:if test="mapInstance=='google'">
 	<s:url var="url" value="https://maps.googleapis.com/maps/api/js">
 		<s:param name="v">3</s:param>
 		<s:param name="client"><s:property value="googleMapsClientId" /></s:param>
@@ -95,9 +85,9 @@ dictionary.set('hide.map', "<oba:message key='hide.map'/>");
 		<s:param name="sensor">false</s:param>
 	</s:url>
 	
-	
+
 	<script src="${url}" type="text/javascript"><!-- //prevent jspx minimization --></script>
-</s:if>
+
 	<s:url var="url" value="/api/config">
 		<s:param name="v"><s:property value="cacheBreaker" /></s:param>
 	</s:url>
@@ -113,7 +103,10 @@ dictionary.set('hide.map', "<oba:message key='hide.map'/>");
 	</s:url>
 	<script type="text/javascript" src="${url}"><!-- //prevent jspx minimization --></script>
 
-
+	<s:url var="url" value="/js/lib/markerManager.js">
+		<s:param name="v"><s:property value="frontEndVersion" /></s:param>
+	</s:url>
+	<script type="text/javascript" src="${url}"><!-- //prevent jspx minimization --></script>
 
 	<s:url var="url" value="/js/lib/rgbcolor.js">
 		<s:param name="v"><s:property value="frontEndVersion" /></s:param>
@@ -125,6 +118,10 @@ dictionary.set('hide.map', "<oba:message key='hide.map'/>");
   	</s:url>
 	<script type="text/javascript" src="${url}"><!-- //prevent jspx minimization --></script>
 
+	<s:url var="url" value="/js/oba/m/Mobile.js">
+		<s:param name="v"><s:property value="frontEndVersion" /></s:param>
+  	</s:url>
+	<script type="text/javascript" src="${url}"><!-- //prevent jspx minimization --></script>
 
 	<s:url var="url" value="/js/lib/popover.js">
 		<s:param name="v"><s:property value="frontEndVersion" /></s:param>
@@ -140,7 +137,7 @@ dictionary.set('hide.map', "<oba:message key='hide.map'/>");
 		<s:param name="v"><s:property value="frontEndVersion" /></s:param>
 	</s:url>
 	<script type="text/javascript" src="${url}"><!-- //prevent jspx minimization --></script>
-<s:if test="mapInstance=='google'">
+
 	<s:url var="url" value="/js/oba/map/GoogleMapWrapper.js">
 		<s:param name="v"><s:property value="frontEndVersion" /></s:param>
 	</s:url>
@@ -160,59 +157,7 @@ dictionary.set('hide.map', "<oba:message key='hide.map'/>");
 		<s:param name="v"><s:property value="frontEndVersion" /></s:param>
 	</s:url>
 	<script type="text/javascript" src="${url}"><!-- //prevent jspx minimization --></script>
-	<s:url var="url" value="/js/lib/markerManager.js">
-		<s:param name="v"><s:property value="frontEndVersion" /></s:param>
-	</s:url>
-	<script type="text/javascript" src="${url}"><!-- //prevent jspx minimization --></script>
-</s:if>
-<s:else>
-
-<s:url var="url" value="/js/lib/leaflet.js">
-	</s:url>
-	<script src="${url}" type="text/javascript">
-	<!-- //prevent jspx minimization -->
-		
-	</script>
-
-
-
-	<s:url var="url" value="/js/oba/map/LeafletMapWrapper.js">
-		<s:param name="v">
-			<s:property value="frontEndVersion" />
-		</s:param>
-	</s:url>
-	<script type="text/javascript" src="${url}">
-	<!-- //prevent jspx minimization -->
-		
-	</script>
-	<s:url var="url" value="/js/oba/map/LeafletPopups.js">
-		<s:param name="v">
-			<s:property value="frontEndVersion" />
-		</s:param>
-	</s:url>
-	<script type="text/javascript" src="${url}">
-	<!-- //prevent jspx minimization -->
-		
-	</script>
-	<s:url var="url" value="/js/oba/map/LeafletRouteMap.js">
-		<s:param name="v">
-			<s:property value="frontEndVersion" />
-		</s:param>
-	</s:url>
-	<script type="text/javascript" src="${url}">
-	<!-- //prevent jspx minimization -->
-		
-	</script>
-
-
 	
-
-</s:else>
-	
-<s:url var="url" value="/js/oba/m/Mobile.js">
-		<s:param name="v"><s:property value="frontEndVersion" /></s:param>
-  	</s:url>
-	<script type="text/javascript" src="${url}"><!-- //prevent jspx minimization --></script>
 	<s:if test="!routeColors.equals('')">	
 		<s:url var="url" value="/m/color-stylesheet">
   			<s:param name="colors"><s:property value="routeColors" /></s:param>
@@ -266,7 +211,7 @@ dictionary.set('hide.map', "<oba:message key='hide.map'/>");
 			<s:if test="%{results.matches.size==1 and results.isGeocode==false}">
 				<div id="mapHider" class="map">
 					<div id="mapExpander">
-						<span id="showMapSpan"><oba:message key='show.map'/></span>
+						<span id="showMapSpan">SHOW MAP</span>
 					</div>
 					<div id="map"><!-- //prevent jspx minimization --></div>
 				</div>

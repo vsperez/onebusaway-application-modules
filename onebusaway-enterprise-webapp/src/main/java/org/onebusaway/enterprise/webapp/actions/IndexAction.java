@@ -81,5 +81,11 @@ public class IndexAction extends OneBusAwayEnterpriseActionSupport {
 
     return "NotFound";
   }
+  public String getMapInstance() {
+	System.out.println(_configurationService.getConfiguration());
+	  System.out.println(_configurationService.getConfigurationValueAsString("display.mapCenterLat", "google"));
+	  	System.out.println(_configurationService.getConfigurationValueAsString("display.mapInstance", "google."));
+	    return _configurationService.getConfigurationValueAsString("display.mapInstance", "google");
+  }
 
 }

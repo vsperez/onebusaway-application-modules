@@ -18,7 +18,8 @@
 -->
 <html xmlns:jsp="http://java.sun.com/JSP/Page"
 	xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:s="/struts-tags"
-	xmlns:wiki="/oba-wiki-tags" xmlns:oba="/oba-tags">
+	xmlns:wiki="/oba-wiki-tags" 
+	xmlns:oba="/oba-tags">
 
 <jsp:directive.page contentType="text/html"  pageEncoding="UTF-8" />
 <head>
@@ -37,14 +38,6 @@
 	<s:param name="v"><s:property value="frontEndVersion" /></s:param>
 </s:url>
 <link rel="stylesheet" href="${url}" type="text/css" media="screen,print"/>
-<s:url var="url" value="/css/map/leaflet.css">
-	<s:param name="v"><s:property value="frontEndVersion" /></s:param>
-</s:url>
-<link rel="stylesheet" href="${url}" type="text/css" media="screen,print"/>
-<link rel="stylesheet" href="${url}" type="text/css" media="screen,print"/>
-
-
-
 
 <jsp:text>
 &lt;!--[if IE 6]&gt;
@@ -64,9 +57,52 @@
 	<s:param name="key"><s:property value="googleMapsApiKey" /></s:param>
 	<s:param name="sensor">false</s:param>
 </s:url>
-
-
 <script src="${url}" type="text/javascript"><!-- //prevent jspx minimization --></script>
+
+<s:url var="url" value="/js/oba/obai18n.js">
+	<s:param name="v"><s:property value="frontEndVersion" /></s:param>
+</s:url>
+<script type="text/javascript" src="${url}"><!-- //prevent jspx minimization --></script>
+<!-- LOAD JS PROPERTIES -->
+<script> 
+
+
+dictionary.set('js.realtime',"<oba:message key='realtime'/>");
+dictionary.set('js.scheduled',"<oba:message key='scheduled'/>");
+dictionary.set('js.busesenroute',"<oba:message key='busesenroute'/>");
+dictionary.set('js.stopcode',"<oba:message key='stopcode'/>");
+dictionary.set('js.dataUpdated',"<oba:message key='dataUpdated'/>");
+dictionary.set('js.unitSecond',"<oba:message key='unitSecond'/>");
+dictionary.set('js.unitSeconds',"<oba:message key='unitSeconds'/>");
+dictionary.set('js.unitMinute',"<oba:message key='unitMinute'/>");
+dictionary.set('js.unitMinutes',"<oba:message key='unitMinutes'/>");
+dictionary.set('js.unitSufix',"<oba:message key='unitSufix'/>");
+dictionary.set('js.noMatches',"<oba:message key='noMatches'/>");
+//js.noScheduleServiceTodayFor
+dictionary.set('js.noScheduleServiceTodayFor',"<oba:message key='noScheduleServiceTodayFor'/>");
+dictionary.set('js.noScheduleServiceFor',"<oba:message key='noScheduleServiceFor'/>");
+dictionary.set('js.atThisTime',"<oba:message key='atThisTime'/>");
+dictionary.set('js.noScheduleServiceAtThisHour',"<oba:message key='noScheduleServiceAtThisHour'/>");
+dictionary.set('js.noBusesEnRouteForThisStop',"<oba:message key='noBusesEnRouteForThisStop'/>");
+dictionary.set('js.clickforshcedue',"<oba:message key='clickforshcedue'/>");
+dictionary.set('js.viewSchedule',"<oba:message key='viewSchedule'/>");
+dictionary.set('js.centerZoom',"<oba:message key='centerZoom'/>");
+dictionary.set('js.to',"<oba:message key='to'/>");
+
+dictionary.set('nearby.stops',"<oba:message key='nearby.stops'/>");
+dictionary.set('nearby.routes',"<oba:message key='nearby.routes'/>");
+dictionary.set('searching',"<oba:message key='searching'/>");
+dictionary.set('searching.location',"<oba:message key='searching.location'/>");
+dictionary.set('schedule.data',"<oba:message key='schedule.data'/>");
+dictionary.set('using.schedule.time',"<oba:message key='using.schedule.time'/>");
+dictionary.set('realtime.data.unavailable',"<oba:message key='realtime.data.unavailable'/>");
+dictionary.set('next.stops',"<oba:message key='next.stops'/>");
+dictionary.set('vehicle',"<oba:message key='vehicle'/>");
+dictionary.set('routes', "<oba:message key='routes'/>");
+dictionary.set('routes.available', "<oba:message key='routes.available'/>");
+
+</script>
+
 
 
 
@@ -110,110 +146,36 @@
 </s:url>
 <script type="text/javascript" src="${url}"><!-- //prevent jspx minimization --></script>
 
-
-
-<s:url var="url" value="/js/lib/leaflet.js">
-</s:url>
-<script src="${url}" type="text/javascript"><!-- //prevent jspx minimization --></script>
-
-
 <s:url var="url" value="/js/oba/Util.js">
 	<s:param name="v"><s:property value="frontEndVersion" /></s:param>
 </s:url>
-<script type="text/javascript" src="${url}"></script>
-<!-- ESTO ES EL ORIGINAL SE PRUEBA OSM MAS ABAJO
+<script type="text/javascript" src="${url}"><!-- //prevent jspx minimization --></script>
+
 <s:url var="url" value="/js/oba/map/GoogleMapWrapper.js">
 	<s:param name="v"><s:property value="frontEndVersion" /></s:param>
 </s:url>
--->
+<script type="text/javascript" src="${url}"><!-- //prevent jspx minimization --></script>
 
-<!-- Google Maps Instance -->
-<!-- 
-<s:if test="mapInstance.equals('google')">
-	<s:url var="url" value="/js/oba/map/GoogleMapWrapper.js">
-		<s:param name="v"><s:property value="frontEndVersion" /></s:param>
-	</s:url>
-	<script type="text/javascript" src="${url}"></script>
-	<s:url var="url" value="/js/oba/map/Popups.js">
-		<s:param name="v"><s:property value="frontEndVersion" /></s:param>
-	</s:url>
-	<script type="text/javascript" src="${url}"></script>
-		<s:url var="url" value="/js/oba/map/RouteMap.js">
-			<s:param name="v"><s:property value="frontEndVersion" /></s:param>
-		</s:url>
-	<script type="text/javascript" src="${url}"></script>
-		<s:url var="url" value="/js/oba/map/Sidebar.js">
-			<s:param name="v"><s:property value="frontEndVersion" /></s:param>
-		</s:url>
-	<script type="text/javascript" src="${url}"></script>
-</s:if>
-
-<s:else>
-
-	
-	 <s:if test="mapInstance.equals('leaflet-google')">
-		<s:url var="url" value="/js/lib/leaflet-google.js">
-		</s:url>
-	</s:if>
-	
-	<s:elseif test="mapInstance.equals('leaflet-bing')">
-		<s:url var="url" value="/js/lib/leaflet-bing.js">
-		</s:url>
-	</s:elseif>
-	 
-	<script src="${url}" type="text/javascript">
-	</script>
-	-->
-	
-	
-	
-
-	<script type="text/javascript" src="${url}"><!-- //prevent jspx minimization -->
-	</script>
-	<s:url var="url" value="/js/oba/map/LeafletMapWrapper.js">
-		<s:param name="v"><s:property value="frontEndVersion" /></s:param>
-	</s:url>
-	<script type="text/javascript" src="${url}"><!-- //prevent jspx minimization --></script>
-	<s:url var="url" value="/js/oba/map/LeafletPopups.js">
-		<s:param name="v"><s:property value="frontEndVersion" /></s:param>
-	</s:url>
-	<script type="text/javascript" src="${url}"><!-- //prevent jspx minimization --></script>
-	<s:url var="url" value="/js/oba/map/LeafletRouteMap.js">
-		<s:param name="v"><s:property value="frontEndVersion" /></s:param>
-	</s:url>
-	<script type="text/javascript" src="${url}"><!-- //prevent jspx minimization --></script>
-	<s:url var="url" value="/js/oba/map/LeafletSidebar.js">
-		<s:param name="v"><s:property value="frontEndVersion" /></s:param>
-	</s:url>
-	<script type="text/javascript" src="${url}"><!-- //prevent jspx minimization --></script>
-<!-- </s:else> 
-
-<script type="text/javascript" src="${url}"></script> -->
-
-
-
-<!-- 
 <s:url var="url" value="/js/oba/map/Popups.js">
 	<s:param name="v"><s:property value="frontEndVersion" /></s:param>
 </s:url>
-<script type="text/javascript" src="${url}"></script>
+<script type="text/javascript" src="${url}"><!-- //prevent jspx minimization --></script>
 
 <s:url var="url" value="/js/oba/map/RouteMap.js">
 	<s:param name="v"><s:property value="frontEndVersion" /></s:param>
 </s:url>
-<script type="text/javascript" src="${url}"></script>
- -->
+<script type="text/javascript" src="${url}"><!-- //prevent jspx minimization --></script>
+
 <s:url var="url" value="/js/lib/markerAnimate.js">
 	<s:param name="v"><s:property value="frontEndVersion" /></s:param>
 </s:url>
 <script type="text/javascript" src="${url}"><!-- //prevent jspx minimization --></script>
 
-<!-- 
+
 <s:url var="url" value="/js/oba/map/Sidebar.js">
 	<s:param name="v"><s:property value="frontEndVersion" /></s:param>
 </s:url>
-
-<script type="text/javascript" src="${url}"></script> -->
+<script type="text/javascript" src="${url}"><!-- //prevent jspx minimization --></script>
 
 <s:url var="url" value="/js/oba/GoogleTranslate.js">
 	<s:param name="v"><s:property value="frontEndVersion" /></s:param>
@@ -238,40 +200,40 @@
 		  		</div>	  	
 		   	  	<ul>
 		   	  		<s:url var="url" namespace="/m" action="index"/>
-					<li id="link_mobile" aria-label="Text only version"><a href="${url}"><s:property value="getText('link.mobile')" escapeHtml="false" escape="false" /></a></li>
+					<li id="link_mobile" aria-label="Text only version"><a href="${url}"><oba:message key='link.mobile'/></a></li>
 
 					<s:url var="url" namespace="/wiki" action="About"/>
-					<li id="link_about"><a href="${url}"><s:property value="getText('link.about')" escapeHtml="false" escape="false"/></a></li>
+					<li id="link_about"><a href="${url}"><oba:message key='link.about'/></a></li>
 
 					<s:url var="url" namespace="/wiki" action="ContactUs"/>
-					<li id="link_contact"><a href="${url}"><s:property value="getText('link.contact')" /></a></li>
+					<li id="link_contact"><a href="${url}"><oba:message key='link.contact'/></a></li>
 
 		 			<!-- <s:url var="url" namespace="/wiki/Developers" action="Index"/>
 		 			<li id="link_developers"><a href="${url}"><s:property value="getText('link.developers')" /></a></li>
  -->
 		 			<s:url var="url" namespace="/wiki/Help" action="Index"/>
-		 			<li id="link_help"><a href="${url}"><s:property value="getText('link.help')" /></a></li>
+		 			<li id="link_help"><a href="${url}"><oba:message key='link.help'/></a></li>
 			   	</ul>
 		   </div>
 
 	       <form action="search.action">
 	         <input type="text" name="q" value=""/>
 	         <input type="submit" value="Find" class="submit"/>
-	         <p id="tip"><s:property value="getText('search.tip')" /></p>
+	         <p id="tip"><oba:message key='search.tip'/></p>
 	       </form>
 	       
 	       <div id="matches">
-	       	 <h2><s:property value="getText('search.results')" />:</h2>
+	       	 <h2><oba:message key='search.result'/> :</h2>
 	       	 <ul><!-- //prevent jspx minimization --></ul>
 		   </div>
 		   
 		   <div id="filtered-matches">
-		   	<h2>Other routes here:</h2>
+		   	<h2><oba:message key='other.routes:'/></h2>
 		   	<ul><!-- //prevent jspx minimization --></ul>
 		   </div>
 	
 	       <div id="suggestions">
-	       	 <h2>Did You Mean?</h2>
+	       	 <h2><oba:message key='did.you.mean'/></h2>
 	       	 <ul></ul>
 		   </div>
 		            
@@ -279,7 +241,7 @@
 	
 		   <div id="loading">
 			   	<div class="loading">
-			   		<span>Loading...</span>
+			   		<span><oba:message key='loading'/></span>
 		   		</div>
 		   </div>
 	
@@ -287,12 +249,12 @@
 			<c:import url="includes/welcome.jspx" />
 		   
 			<s:url var="url" namespace="/routes" action="index"/>
-			<div id="available-routes"><a href="${url}"><s:property value="getText('click.here')" /></a>&#160;<s:property value="getText('list.routes')" /></div>
+			<div id="available-routes"><a href="${url}"><oba:message key='click.here'/></a>&#160;<oba:message key='list.routes'/> </div>
 		   
 			<div id="cant-find">
 				<h2><oba:message key="cant.find"/></h2>
 				<s:url var="url" namespace="/routes" action="index" />
-				<p><s:property value="getText('main.cantfindroute.text')" /> <a href="${url}">Click here</a> to see which routes are currently available.</p>
+				<p><oba:message key='main.cantfindroute.text'/>&#160;<a href="${url}"><oba:message key='click.here'/></a>&#160; <oba:message key='see.available.routes'/></p>
 			</div>
 			
 			<s:if test="globalServiceAlerts!=null">
@@ -323,10 +285,11 @@
 			</a>
 
 		</div>
-		<div class="container clear"><!-- jspx --></div>
+		<!-- <div class="container clear"></div>
 	  	<s:url var="url" value="/css/img/google_logo.png"></s:url>
 		<div id="google_translate_element_side">Google Translate <img id="icon" src="${url}" /></div>
-    </div>
+		-->
+    </div> 
 
 	<div id="map"><!-- //prevent jspx minimization --></div>
 	<div id="legend"><!-- //prevent jspx minimization --></div>
@@ -352,31 +315,31 @@
 			    	<s:url var="url" namespace="/m" action=""/>
 			    	<a href="${url}" target="_new">
 			    		<p>Mobile Web</p>
-			    		<a rel="popover"><div id="smartphone_img">&amp;nbsp;</div></a>
+			    		<a rel="popover"><div id="smartphone_img">&amp;&#160;</div></a>
 			    	</a>
 			    </li>
 			    <li id="wizard-col4">
 			    	<s:url var="url" namespace="/wiki/Help" action="SMSOverview"/>
 			    	<a href="${url}" target="_new">
 			    		<p>SMS</p>
-			    		<a rel="popover"><div id="sms_img">&amp;nbsp;</div></a>
+			    		<a rel="popover"><div id="sms_img">&amp;&#160;</div></a>
 			    	</a>
 			    </li>
 			</ul>
 			<a class="close"><span class="close_txt">Close</span> ×</a>
 		</div>
 		<div id="wizard_didyoumean">
-			<a data-placement="right" class="wizard_panel" rel="popover">&amp;nbsp;</a>
+			<a data-placement="right" class="wizard_panel" rel="popover">&amp;&#160;</a>
 			<a class="close"><span class="close_txt">Close</span> ×</a>
 		</div>
 		<div id="wizard_inuse">
-			<a data-placement="right" class="wizard_panel" rel="popover">&amp;nbsp;</a>
+			<a data-placement="right" class="wizard_panel" rel="popover">&amp;&#160;</a>
 			<span class="text_span">Follow the instructions above . . .</span>
 			<a class="close"><span class="close_txt">Close</span> ×</a>
 		</div>
 		<div id="wizard_finaltip">
 			<div>
-				<p><span style="font-weight: bold;">Tips:</span> <a data-placement="right" class="wizard_panel" rel="popover">&amp;nbsp;</a> <s:property value="getText('main.application.name')" /> is also available via <a id="wizard_mobile" rel="popover">Mobile Web</a> or <a id="wizard_sms" rel="popover">SMS/Text Message</a>.</p>
+				<p><span style="font-weight: bold;">Tips:</span> <a data-placement="right" class="wizard_panel" rel="popover">&amp;&#160;</a> <s:property value="getText('main.application.name')" /> is also available via <a id="wizard_mobile" rel="popover">Mobile Web</a> or <a id="wizard_sms" rel="popover">SMS/Text Message</a>.</p>
 				<p>Remember your Stopcode from the pop-ups or find it on a <a id="tips_code_popup" rel="popover" data-placement="above">bus stop pole box</a>.</p>
 				<p id="sharelinks"><a id="wizard_share" rel="popover">Share</a> this link and tell others about <s:property value="getText('main.application.name')" />!
 					<s:set var="link" value="getText('main.agency.twitter.link')" />

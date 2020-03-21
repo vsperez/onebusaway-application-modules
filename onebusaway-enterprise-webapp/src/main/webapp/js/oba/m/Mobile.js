@@ -191,7 +191,8 @@ OBA.Mobile = (function() {
 				$mapDiv = $('#map');
 				$mapDiv.slideToggle(500, function () {
 					$mapExpander.children('span').text(function () {
-						return $mapDiv.is(":visible") ? "HIDE MAP" : "SHOW MAP";
+						
+						return $mapDiv.is(":visible") ?getValueFor('hide.map') :  getValueFor('show.map');
 					});
 					if ($mapDiv.is(":visible")) updateMap();
 				});
@@ -296,8 +297,15 @@ OBA.Mobile = (function() {
 
 						case "StopResult":
 							addRoutesToLegend(matches[0].routesAvailable, "Routes available:", routeFilterShortName, matches[0].id);
-
-							var latlng = new google.maps.LatLng(matches[0].latitude, matches[0].longitude);
+							var latlon = null;
+							if(typeof google != 'undefined')
+							{
+								latlng = new google.maps.LatLng(matches[0].latitude, matches[0].longitude);
+							}
+							else
+							{
+								latlng = new L.LatLng(matches[0].latitude, matches[0].longitude);
+							}
 							if (showPopup != undefined && !showPopup) {
 								routeMap.addStop(matches[0], null);
 								routeMap.highlightStop(matches[0]);
@@ -341,6 +349,7 @@ OBA.Mobile = (function() {
             // on load only when google maps says it's ready.
 			var mapElement = document.getElementById("map");
 			if (mapElement !== null) {
+				console.log("MOBILE.jS");
 				routeMap = OBA.RouteMap(mapElement, function() {
 					// deep link handler
 					updateMap();

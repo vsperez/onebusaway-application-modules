@@ -58,7 +58,50 @@ OBA.Config = {
 			_gaq.push(['_trackEvent', "Desktop Web", type, value]);
 		},
 		
+		
 		loadLocationIcons: function() {
+		
+			if ( typeof google==='undefined' 
+					|| typeof google.maps === 'undefined')
+			{
+				//  shadowUrl: 'leaf-shadow.png',
+				// shadowSize:   [50, 64], // size of the shadow
+				var locationIcons = [], activeLocationIcons = [];
+				var normalLocationIcon = L.icon({
+				    iconUrl: "img/location/location.png",
+				  
+
+				    iconSize:     [24, 32], // size of the icon
+				   
+				    iconAnchor:   [0, 0], // point of the icon which will correspond to marker's location
+				    shadowAnchor: [4, 62],  // the same for the shadow
+				    popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+				});
+				
+				var activeLocationIcon = L.icon({
+				    iconUrl: "img/location/location_active.png",
+				  
+
+				    iconSize:     [24, 32], // size of the icon
+				   
+				    iconAnchor:   [0, 0], // point of the icon which will correspond to marker's location
+				    shadowAnchor: [4, 62],  // the same for the shadow
+				    popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+				});
+				
+				locationIcons[0] = normalLocationIcon;
+				activeLocationIcons[0] = activeLocationIcon;
+				
+				for (var i=1; i < 10; i++) {
+					var numberedLocationIcon = L.icon({iconUrl: "img/location/location_" + i + ".png", iconSize:     [24, 32]});
+					var activeNumberedLocationIcon = L.icon({iconUrl: "img/location/location_active_" + i + ".png", iconSize:     [24, 32]});
+					locationIcons[i] = numberedLocationIcon;
+					activeLocationIcons[i] = activeNumberedLocationIcon;
+				}
+				var shadowImage =L.icon({iconUrl: "img/location/shadow.png",iconSize:     [24, 32]});
+					
+				return  [locationIcons, activeLocationIcons, shadowImage];
+			}
 			var locationIcons = [], activeLocationIcons = [];
 			var size = new google.maps.Size(24, 32), 
 				o_point = new google.maps.Point(0,0), 
