@@ -69,6 +69,7 @@ OBA.Popups = (function() {
 				}
 				openBubble = true;
 			}
+			console.log(refreshPopupRequest);
 			refreshPopupRequest = jQuery.getJSON(url, params, function(json) {
 				if(popup === null)
 				{
@@ -109,7 +110,7 @@ OBA.Popups = (function() {
 			var age = parseInt(timestampContainer.attr("age"), 10);
 			var referenceEpoch = parseInt(timestampContainer.attr("referenceEpoch"), 10);
 			var newAge = age + ((new Date().getTime() - referenceEpoch) / 1000);
-			timestampContainer.text(getValueFor('js.dataUpdated') + OBA.Util.displayTime(newAge));
+			timestampContainer.text(getValueFor('js.dataUpdated') +" "+ OBA.Util.displayTime(newAge));
 		
 		};
 		updateTimestamp();	
@@ -656,27 +657,26 @@ OBA.Popups = (function() {
 		
 
 		if(routeAndDirectionWithoutArrivalsCount > 0) {
-			html += '<p class="service muted">No buses en-route to this stop for:</p>';
+			html += '<p class="service muted">'+getValueFor('js.noBusesEnRouteForThisStop')+'</p>';
 
 			html += '<ul>';
 			var i = 0;
 			jQuery.each(routeAndDirectionWithoutArrivals, function(_, d) {
 				html += '<li class="route">';
-				html += '<a class="muted" href="#' + stopIdWithoutAgency + "%20" + d.shortName + '"><span class="route-name">' + d.shortName + "</span>&nbsp;&nbsp; " + d.destination + '</a>';
+				html += '<a class="muted" href="#' + uniqueStopId + "%20" + d.shortName + '"><span class="route-name">' + d.shortName + "</span>&nbsp;&nbsp; " + d.destination + '</a>';
 				if (d.id in alertData) {
-					html += ' <a id="alert-link|' + stopIdWithoutAgency + '|' + d.id + '|' + d.shortName + '" class="alert-link" href="#">Alert</a>';
+					html += ' <a id="alert-link|' + uniqueStopId + '|' + d.id + '|' + d.shortName + '" class="alert-link" href="#">Alert</a>';
 				}
 				html += '</li>';
 
 				i++;
 			});
-			html += '<li class="last muted">(check back shortly for an update)</li>';
+			html += '<li class="last muted">('+getValueFor('check.back.shortly')+')</li>';
 			html += '</ul>';
 		}
 
 		if(routeAndDirectionWithoutSerivceCount > 0) {
-			html += '<p class="service muted">No scheduled service at this time for:</p>';
-
+			html += '<p class="service muted">'+((dictionary!=undefined && dictionary!=null)?getValueFor('js.noScheduleServiceAtThisHour'): 'No scheduled service at this time for:')+'</p>';
 			html += '<ul class="no-service-routes">';
 			var i = 0;
 			jQuery.each(routeAndDirectionWithoutSerivce, function(_, d) {
@@ -748,8 +748,6 @@ OBA.Popups = (function() {
 
 	// updates timestamp in popup bubble every second
 	setInterval(function() {
-		console.log(popup);
-		console.log(___id);
 		if(popup !== null && typeof popup.updateTimestamp === 'function') {
 			popup.updateTimestamp();
 		}

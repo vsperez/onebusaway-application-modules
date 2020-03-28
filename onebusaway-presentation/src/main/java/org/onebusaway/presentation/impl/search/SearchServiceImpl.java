@@ -417,12 +417,24 @@ public class SearchServiceImpl implements SearchService {
         if (results.isEmpty() && hasSemiColon) {
             tryAsRoutes(results, normalizedQuery, resultFactory,locale);
         }
-
+        boolean stopsAsNumber=false;
+        try
+        {
+        	stopsAsNumber=Boolean.parseBoolean(_configurationService
+        			.getConfigurationValueAsString("display.stopsAsNumber", "false"));
+        }
+        catch (Exception e) {
+			_log.error("property display.stopsAsNumber must be true or false.");
+		}
+        
 		// only guess it as a stop if its numeric or has possible agency prefix
 		// results does not support mixed types -- it can only be a route or a stop
-		if (results.isEmpty() && !hasComma && (StringUtils.isNumeric(normalizedQuery) || normalizedQuery.contains("_")) ) {
+		if (results.isEmpty() && !hasComma && 
+				((StringUtils.isNumeric(normalizedQuery) || !stopsAsNumber)
+						|| normalizedQuery.contains("_"))  ) {
 			tryAsStop(results, normalizedQuery, resultFactory, serviceDate,locale);
 		}
+		
 
 		if (!"true".equalsIgnoreCase(_configurationService
 				.getConfigurationValueAsString("display.skipStopNameSearch", "false"))) {

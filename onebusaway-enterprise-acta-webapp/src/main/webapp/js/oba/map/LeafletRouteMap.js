@@ -106,7 +106,6 @@ OBA.RouteMap = function(mapNode, initCallbackFn, serviceAlertCallbackFn) {
 
 	// STOPS
 	function removeStops(preserveStopsInView) {
-		console.log("removeStops")
 		jQuery.each(stopsById, function(_, marker) {
 			var stopId = marker.stopId;
 			/*if(stopId === OBA.Popups.getPopupStopId()) {
@@ -424,7 +423,7 @@ OBA.RouteMap = function(mapNode, initCallbackFn, serviceAlertCallbackFn) {
 
         return R * c;
     }
-	
+
 	function removeVehicles(routeId) {
 		if(typeof vehiclesByRoute[routeId] !== 'undefined') {
 			var vehicles = vehiclesByRoute[routeId];
@@ -437,7 +436,20 @@ OBA.RouteMap = function(mapNode, initCallbackFn, serviceAlertCallbackFn) {
 			});
 		}
 	}
-	
+	function panTo(polylines)
+	{
+		var newBounds = new L.LatLngBounds();
+		jQuery.each(polylines, function(_, polyline) {
+			if (typeof polyline !== 'undefined') {
+				var coordinates = polyline.getLatLngs();
+				for (var k=0; k < coordinates.length; k++) {
+					var coordinate = coordinates[k];
+					newBounds.extend(coordinate);
+				}
+			}
+		});
+		map.fitBounds(newBounds);
+	}
 	// MISC	
 	function removeDisambiguationMarkers() {
 		jQuery.each(disambiguationMarkers, function(_, marker) {
@@ -494,40 +506,37 @@ OBA.RouteMap = function(mapNode, initCallbackFn, serviceAlertCallbackFn) {
 	          div.innerHTML = '<img src="' + icon + '"> ' + '<span>' + name + '</span>';
 	          if (legend) legend.appendChild(div);
 	        }
-	        console.log("ADD LEGEND");
 	        var info = L.control();
-	        console.log("CONTROL LEGEND");
 	        info.onAdd = function (map) {
-	        	 console.log("ONADD ");
 	        	 console.log(legend );
 	        	return  legend;
 	        }
-	        console.log("PREADD");
 	        info.addTo(map);
-	        console.log("POST");
 	        //map.controls[google.maps.ControlPosition.RIGHT_TOP].push(legend);
 	}
 		
 	//////////////////// CONSTRUCTOR /////////////////////
 	map = new OBA.LeafletMapWrapper(document.getElementById("map"));
 	console.log(map);
-	if(initialized === false) {
-		initialized = true;
-	}
+	
 	// If there is no configured map center and zoom...
 	// Zoom/pan the map to the area specified from our configuration JavaScript that gets its
 	// values from the server dynamically on page load.
+	
 	if (!OBA.Config.mapCenterLat || !OBA.Config.mapCenterLon || !OBA.Config.mapZoom) {
+		
 		var swCorner = new L.LatLng(OBA.Config.mapBounds.swLat, OBA.Config.mapBounds.swLon);
 		var neCorner = new L.LatLng(OBA.Config.mapBounds.neLat, OBA.Config.mapBounds.neLon);
 		var bounds = new L.LatLngBounds(swCorner, neCorner);
+		
 		map.fitBounds(bounds);
 	}
 	map.addEventListener('load moveend', function(e) { 
 		if(initialized === false) {
 			initialized = true;
-			
-		showLegend(map);
+		//alert('???');
+		
+		
 
 
 			
@@ -558,7 +567,8 @@ OBA.RouteMap = function(mapNode, initCallbackFn, serviceAlertCallbackFn) {
 			});
 		}
 	});
-	
+	if(initialized === false)
+		showLegend(map);
 	// timer to update data periodically 
 	setInterval(function() {
 		jQuery.each(vehiclesByRoute, function(routeId, vehicles) {
@@ -606,27 +616,35 @@ OBA.RouteMap = function(mapNode, initCallbackFn, serviceAlertCallbackFn) {
 				var points = OBA.Util.decodePolyline(encodedPolyline);
 			
 				var latlngs = jQuery.map(points, function(x) {
+					
 					return new L.LatLng(x[0], x[1]);
 				});
 
-				var shape = new L.Polyline({
-					path: latlngs,
+				var shapeOptions = {
+					//path: latlngs,
 					strokeColor: "#" + color,
 					strokeOpacity: 0.7,
 					strokeWeight: 3,
 					map: map
-				});
+				};
 
-				var hoverShape = new L.Polyline({
-					path: latlngs,
+				var hoverShapeOptions = {
+					//path: latlngs,
 					strokeColor: "#" + color,
 					strokeOpacity: 0.6,
 					strokeWeight: 10,
 					map: map
-				});
-
+				};
+				var shape = new L.Polyline(latlngs, shapeOptions);			
+				shape.addTo(map);
+				
+				var hoverShape = new L.Polyline(latlngs, hoverShapeOptions);
+				hoverShape.addTo(map);
+			
 				hoverPolyline.push(shape);
 				hoverPolyline.push(hoverShape);
+				panTo(hoverPolyline);
+				
 			});
 		},
 		
@@ -751,9 +769,11 @@ OBA.RouteMap = function(mapNode, initCallbackFn, serviceAlertCallbackFn) {
 	    	});
 		},
 		
-		showLocation: function(latlon) {
+		showLocation: function(latlon,zoom) {
+			if(zoom === undefined)
+				zoom=16;
 			map.panTo(latlon);			
-			map.setZoom(16);
+			map.setZoom(zoom);
 		},
 		
 		showBounds: function(bounds) {

@@ -161,7 +161,7 @@ OBA.Sidebar = function() {
 	function disambiguateLocations(locations) {
 
 		suggestions.find("h2")
-			.text("Did you mean?");
+			.html(getValueFor("did.you.mean"));
 
 		var resultsList = suggestions.find("ul");
 
@@ -173,7 +173,7 @@ OBA.Sidebar = function() {
 
 		    // sidebar item
 			var link = jQuery("<a href='#" + location.latitude + "%2C" + location.longitude + "'></a>")
-							.text(address);
+							.html(address);
 
 			var listItem = jQuery("<li></li>")
 							.addClass("locationItem")
@@ -229,10 +229,11 @@ OBA.Sidebar = function() {
 				routeMap.addStop(stop, null);
 				
 				var stopLink = jQuery("<a href='#'></a>")
-									.text(stop.name);
+									.html(stop.name);
 					
 				var imagePiece = "middle";
 				if(_ === 0) {
+					stopsList.append(getValueFor('bustopsList')+"<br>");
 					imagePiece = "start";
 				} else if(_ === json.stops.length - 1) {
 					imagePiece = "end";
@@ -286,7 +287,7 @@ OBA.Sidebar = function() {
 		});
 
 		if(typeof title !== "undefined" && title !== null) {
-			matches.find("h2").text(title);
+			matches.find("h2").html(title);
 		}
 
 		var resultsList = matches.find("ul");
@@ -324,12 +325,12 @@ OBA.Sidebar = function() {
 				// sidebar item
 				var titleBox = jQuery("<p></p>")
 								.addClass("name")
-								.text(getRouteShortLongName(routeResult))
+								.html(getRouteShortLongName(routeResult))
 								.css("border-bottom", "5px solid #" + routeResult.color);
 				
 				var descriptionBox = jQuery("<p></p>")
 								.addClass("description")
-								.text(routeResult.description == null ? '' : routeResult.description);
+								.html(routeResult.description == null ? '' : routeResult.description);
 	
 				var listItem = jQuery("<li></li>")
 								.addClass("legendItem")
@@ -367,7 +368,7 @@ OBA.Sidebar = function() {
 				if (routeResult.directions.length == 0) {
 					var noServiceMessage = jQuery("<div></div>")
 						.addClass("no-service")
-						.text( ((dictionary!=undefined && dictionary!=null)?getValueFor('js.noScheduleServiceTodayFor'): 'No scheduled service today for the')    +" " +
+						.html( ((dictionary!=undefined && dictionary!=null)?getValueFor('js.noScheduleServiceTodayFor'): 'No scheduled service today for the')    +" " +
 							getRouteShortName(routeResult));
 
 					descriptionBox.append(noServiceMessage);
@@ -378,13 +379,13 @@ OBA.Sidebar = function() {
 					var directionHeader = jQuery("<p></p>");
 					
 					jQuery("<span></span>")
-						.text("to " + direction.destination)
+						.html(getValueFor('js.to')+ " " + direction.destination)
 						.appendTo(directionHeader);
 					
 					if(direction.hasUpcomingScheduledService === false) {
 						var noServiceMessage = jQuery("<div></div>")
 													.addClass("no-service")
-													.text(   ((dictionary!=undefined && dictionary!=null)?getValueFor('js.noScheduleServiceFor'): 'No scheduled service for the')    +" " + 
+													.html(   ((dictionary!=undefined && dictionary!=null)?getValueFor('js.noScheduleServiceFor'): 'No scheduled service for the')    +" " + 
 															getRouteShortName(routeResult) + 
 															" "+ ((dictionary!=undefined && dictionary!=null)?getValueFor('js.to'):"to")+" " + direction.destination + " "+ ((dictionary!=undefined && dictionary!=null)?getValueFor('js.atThisTime'): 'at this time.') );
 	
@@ -464,13 +465,13 @@ OBA.Sidebar = function() {
 
 	// show multiple route choices to user
 	function showRoutePickerList(routeResults) {	
-		suggestions.find("h2").text("Did you mean?");
+		suggestions.find("h2").html(getValueFor("did.you.mean"));
 
 		var resultsList = suggestions.find("ul");
 
 		jQuery.each(routeResults, function(_, route) {
 			var link = jQuery('<a href="#' + getRouteShortName(route) + '"></a>')
-							.text(getRouteShortName(route))
+							.html(getRouteShortName(route))
 							.attr("title", route.description);
 
 			var listItem = jQuery("<li></li>")
@@ -548,7 +549,7 @@ OBA.Sidebar = function() {
 	
 	// show multiple stop choices to user
 	function showStopPickerList(stopResults) {
-		suggestions.find("h2").text("Did you mean?");
+		suggestions.find("h2").html(getValueFor("did.you.mean"));
 
 		var resultsList = suggestions.find("ul");
 
@@ -759,6 +760,13 @@ OBA.Sidebar = function() {
 	}
 
 	return {
+		
+		showLatLon: function(latLon,zoom)
+		{
+			if(zoom==undefined)
+				zoom=10;
+			routeMap.showLocation(latlng,zoom);
+		},
 		initialize: function() {
 			addSearchBehavior();
 			addResizeBehavior();
@@ -850,10 +858,10 @@ OBA.Sidebar = function() {
 		}
 	};
 };
-
+var sideBar=OBA.Sidebar();
 // for IE: only start using google maps when the VML/SVG namespace is ready
 if(jQuery.browser.msie) {
-	window.onload = function() { OBA.Sidebar().initialize(); };
+	window.onload = function() { sideBar.initialize(); };
 } else {
-	jQuery(document).ready(function() { OBA.Sidebar().initialize(); });
+	jQuery(document).ready(function() { sideBar.initialize(); });
 }

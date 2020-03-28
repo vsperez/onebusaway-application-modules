@@ -34,11 +34,11 @@
 #bustime a:visited,
 #bustime a:active,
 #bustime a {
-	color: #0189c7;
+	color: #2670a6;
 }
 
 #bustime a:hover {
-	color: #33CCFF;
+	color: #0189c7;
 }
 
 /* header on wiki pages */
@@ -214,7 +214,14 @@
 	line-height: 1.2em;
 	border: 0;
 }
-
+.wiki_content div
+{
+	
+}
+#text  h1 {
+	font-size: 2.2em !important;
+	font-weight: bold !important	;
+}
 .wiki_content a {
 	text-decoration: none;
 }
@@ -398,3 +405,25 @@ html, body {
 	display: none;
 	height: 0px;
 }
+
+.cityList {
+	padding-top: 5px;
+	padding-left:20px;
+	list-style-type:circle !important;
+	font-size: 15px !important;
+	
+}
+.cityList  li {
+  list-style-type: circle !important;
+}
+
+.cityList  li a {
+	
+ color:#000000  !important;
+}
+.cityList li a:hover {
+ color:red  !important;
+}
+
+
+

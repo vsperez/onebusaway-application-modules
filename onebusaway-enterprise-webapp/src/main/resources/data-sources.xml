@@ -137,6 +137,7 @@
 <bean id="wikiRenderingService" class="org.onebusaway.wiki.xwiki.impl.XWikiRenderingServiceImpl">
     <property name="wikiDocumentViewUrl" value="/p/%{documentName}.action" />
     <property name="wikiAttachmentUrl" value="/p/%{documentName}@%{attachmentName}!attachment.action" />
+    <property name="wikiDocumentEditUrl" value="" />
 </bean>
 	 <import resource="classpath:branded-sources.xml" />
 </beans>

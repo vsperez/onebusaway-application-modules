@@ -158,7 +158,13 @@ OBA.Util = (function() {
 			if (OBA.Config.useAgencyId == 'true') {
 				return s;
 			}
-			return s.match(/\d*$/);
+			if(s.includes("_"))
+			{
+				return s.split("_")[1];
+			}
+			else
+				return s;
+			//return s.match(/\d*$/);
 		}
 	};
 })();

@@ -19,8 +19,22 @@
 	xmlns:c="http://java.sun.com/jsp/jstl/core" 
 	xmlns:s="/struts-tags"
 	xmlns:wiki="/oba-wiki-tags" 
-	class="welcome">
-	
+	 xmlns:oba="/oba-tags">
+<jsp:directive.page contentType="text/html" pageEncoding="UTF-8" />
+	<br/>
+Para buscar pruebe con estos ejemplos:
+<ul>
+    <li>Recorrido:   <a href="?q=B">B</a> &#160;  <a href="?q=B01">B01</a></li>  
+    <li>Paraderos:   <a href="?q=P-122">P-122</a> &#160;  <a href="?q=CAYUMAPU">CAYUMAPU</a></li>
+ </ul>
+ <br/>
+ <p style="font-weight: bold;"><oba:message key="also.available"></oba:message></p>
+ <div>
+ <s:set var="link" value="getText('main.playstore.link')"/>
+
+ <img style="width: 32px;" onclick="window.open('https://play.app.goo.gl/?link=${link}');" src="../img/android.png"/>
+ <img style="width: 32px;" onclick="" src="../img/ios.png"/>
+	</div>
 	<!-- Prevent jspx minimization -->
 	
 </div>

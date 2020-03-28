@@ -166,7 +166,7 @@ public class FederatedTransitDataBundleCreator {
    */
   public void run() throws IOException, ClassNotFoundException,
       UnknownTaskException {
-
+	System.out.println("USING::::::"+_outputPath);
     _outputPath.mkdirs();
 
     setSystemProperties();
@@ -186,6 +186,9 @@ public class FederatedTransitDataBundleCreator {
 
     // Clear cache files
     FederatedTransitDataBundle bundle = context.getBean(FederatedTransitDataBundle.class);
+    if(bundle.getPath()==null)
+    	bundle.setPath(_outputPath);
+   // System.out.println("???"+bundle.getPath());
     clearExistingCacheFiles(bundle);
     int taskSize = taskNames.size();
     int i = 0;

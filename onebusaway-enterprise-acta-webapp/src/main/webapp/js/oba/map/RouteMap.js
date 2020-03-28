@@ -801,10 +801,13 @@ OBA.RouteMap = function(mapNode, initCallbackFn, serviceAlertCallbackFn) {
 	    	});
 		},
 		
-		showLocation: function(latlon) {
+		showLocation: function(latlon,zoom) {
+			if(zoom === undefined)
+				zoom=16;
 			map.panTo(latlon);			
-			map.setZoom(16);
+			map.setZoom(zoom);
 		},
+		
 		
 		showBounds: function(bounds) {
 			map.fitBounds(bounds);

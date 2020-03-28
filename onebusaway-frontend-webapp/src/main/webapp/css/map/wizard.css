@@ -88,6 +88,7 @@
 	font-style: italic;
 	text-align: center;
 	line-height: 150%;
+	vertical-align: middle;
 }
 
 #inner-col1 {
@@ -112,11 +113,24 @@
 /* wizard-col2 includes 'Also available using:' text */
 
 #wizard-col2 {
-	margin-top: 3.5%;
-	width: 7%;
+	/*margin-top: 3.5%;*/
+	width: 30%;
 	text-align: left;
 	line-height: 150%;
 	font-weight: normal;
+}
+#wizard-col2 div {
+	/*margin-top: 3.5%;*/
+	display: table;
+	height: 135px;
+}
+#wizard-col2 div p {
+	/*margin-top: 3.5%;*/
+	display: table-cell;
+		font-weight: bold;
+	font-size: 14px;
+	text-align: center;
+	vertical-align: middle;
 }
 
 /* wizard-col3 and wizard-col4 include mobile images/links */
@@ -125,7 +139,7 @@
 	margin-left: .5%;
 	cursor: pointer;
 	height: 135px;
-	width: 177px;
+	width: 70px;
 	position: relative;
 }
 
@@ -160,7 +174,26 @@
 	bottom: 0;
 	display: inline;
 }
-
+#android_img {
+	
+	background: url("img/wizard/android.png") no-repeat center bottom;
+	height: 64px;
+	width: 64px;
+	position: absolute;
+	bottom: 30px;
+	display: inline;
+	
+}
+#ios_img {
+	
+	background: url("img/wizard/ios.png") no-repeat center bottom;
+	height: 64px;
+	width: 64px;
+	position: absolute;
+	bottom: 30px;
+	display: inline;
+	
+}
 /* Close buttons */
 
 #wizard_start a.close, #wizard_didyoumean a.close, #wizard_inuse a.close, #wizard_finaltip a.close {
@@ -263,6 +296,16 @@ a#wizard_mobile, a#wizard_sms, a#wizard_share, a#tips_code_popup {
     margin-top: -5px;
 }
 
+#wizard_finaltip p span.ui-icon-linkedin {
+	background: url("img/wizard/linkedin.png") no-repeat 0 2%;
+    display: inline-block;
+    position: relative;
+    height: 64px;
+    width: 64px;
+    margin-left: 12px;
+    margin-top: -5px;
+}
+
 #wizard_finaltip p span.ui-icon-facebook  {
 	background: url("img/wizard/facebook.png") no-repeat left top;
 	display: inline-block;
@@ -316,7 +359,8 @@ a#wizard_mobile, a#wizard_sms, a#wizard_share, a#tips_code_popup {
 .popover {
     padding: 5px;
     position: absolute;
-    z-index: 100;
+    z-index: 10000;
+    
 }
 .popover .arrow {
     height: 0;
@@ -369,7 +413,7 @@ a#wizard_mobile, a#wizard_sms, a#wizard_share, a#tips_code_popup {
   box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
 }
 .popover .title {
-    background-color: #3398C7;
+    background-color: #206c9c;
     color: #FFFFFF;
     border-bottom: 1px solid #EEEEEE;
     border-radius: 3px 3px 0 0;

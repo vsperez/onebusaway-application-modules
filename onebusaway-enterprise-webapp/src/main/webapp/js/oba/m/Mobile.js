@@ -67,12 +67,12 @@ OBA.Mobile = (function() {
 			refreshBar.find("a").click(function(e) {
 				e.preventDefault();
 
-				refreshTimestamp.text("Loading...");
+				refreshTimestamp.html("Loading...");
 				refreshBar.addClass("loadingRefresh");
 
 				jQuery("#content")
 					.load(location.href + " #content>*", null, function() {
-						refreshTimestamp.text("Updated " + new Date().format("mediumTime"));
+						refreshTimestamp.html("Updated " + new Date().format("mediumTime"));
 						refreshBar.removeClass("loadingRefresh");
 						updateServiceAlertHeaderText();
 					});
@@ -122,9 +122,9 @@ OBA.Mobile = (function() {
 			.addClass("nearby-button").appendTo(splitButton);
 		
 		nearbyStopsBtn.append(jQuery("<div></div>").attr("id", "nearby-stops-button-icon")
-				.append(jQuery("<span></span>").addClass("nearby-text").text(getValueFor('nearby.stops'))));
+				.append(jQuery("<span></span>").addClass("nearby-text").html(getValueFor('nearby.stops'))));
 		nearbyRoutesBtn.append(jQuery("<div></div>").attr("id", "nearby-routes-button-icon")
-				.append(jQuery("<span></span>").addClass("nearby-text").text(getValueFor('nearby.routes'))));
+				.append(jQuery("<span></span>").addClass("nearby-text").html(getValueFor('nearby.routes'))));
 		
 		searchPanelForm.before(splitButton);
 				
@@ -190,7 +190,7 @@ OBA.Mobile = (function() {
 				$mapExpander = $(this);
 				$mapDiv = $('#map');
 				$mapDiv.slideToggle(500, function () {
-					$mapExpander.children('span').text(function () {
+					$mapExpander.children('span').html(function () {
 						
 						return $mapDiv.is(":visible") ?getValueFor('hide.map') :  getValueFor('show.map');
 					});

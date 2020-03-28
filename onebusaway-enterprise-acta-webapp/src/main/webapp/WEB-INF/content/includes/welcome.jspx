@@ -15,6 +15,26 @@
     limitations under the License.
 
 -->
+<html xmlns:jsp="http://java.sun.com/JSP/Page"
+	xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:s="/struts-tags"
+	xmlns:wiki="/oba-wiki-tags" xmlns:oba="/oba-tags">
+<jsp:directive.page contentType="text/html" pageEncoding="UTF-8" />
+
 <div id="welcome">
-	<!-- Prevent jspx minimization -->
+<br/>
+<h2>Esta aplicación se encuentra actualmente disponible en:</h2>
+<ul class="cityList">
+  <li>   <a onclick="sideBar.showLatLon(getLanLon(-22.4566708, -68.9237137),13);" href="#">Calama </a></li>
+  <li>  <a onclick="sideBar.showLatLon(getLanLon(-33.633333333333, -70.366666666667),14);" href="#">Cajón del Maipo </a></li>
+  <li>  <a onclick="sideBar.showLatLon(getLanLon(-36.76498341737498, -73.08922396161243),13);" href="#">Concepcion </a></li>
+  <li>  <a onclick="sideBar.showLatLon(getLanLon(-39.27883361081324, -72.26201179101562),14);" href="#">Villarrica</a> </li>
+  <li>  <a onclick="sideBar.showLatLon(getLanLon(-39.70871452859341, -72.92147295604771),14);" href="#">Valdivia </a></li>
+</ul>
+<br/>
+Pruebe estos ejemplos:
+<ul>
+    <li>Recorrido:   <a href="#B">B</a> &#160;  <a href="#B01">B01</a></li>  
+    <li>Paraderos:   <a href="#P-122">P-122</a> &#160;  <a href="#CAYUMAPU">CAYUMAPU</a></li>
+ </ul>
 </div>
+</html>

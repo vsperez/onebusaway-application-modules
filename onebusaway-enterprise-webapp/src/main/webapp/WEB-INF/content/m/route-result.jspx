@@ -74,7 +74,7 @@
 			<div class="directionForRoute">
 				<p class="directionTitle">
 					<strong>
-						<s:property value="shortName" />&amp;nbsp;to&amp;nbsp;<s:property value="destination" />
+						<s:property value="shortName" />&amp;nbsp;<oba:message key='to'/>&amp;nbsp;<s:property value="destination" />
 					</strong> 
 				</p>
 		
@@ -82,11 +82,11 @@
 					<c:when test="${hasUpcomingScheduledService==false}">
 						<p class="noService">
 						
-							<oba:message key='noScheduleServiceFor'/>	&#160; <s:property value="shortName" /> <s:property value="shortName" /> &#160; <oba:message key='atThisTime'/>
+							<oba:message key='noScheduleServiceFor'/>	&#160; <s:property value="shortName" />&#160; <oba:message key='atThisTime'/>
 						</p>
 					</c:when>
 				</c:choose>
-							
+				<oba:message key='bustopsList'/>			
 				<ul class="stopsOnRoute stopsOnRouteColor${color}">
 					<s:iterator value="stops" status="stopsStatus">
 						<li class="${stopsStatus.index == 0 ? 'start' : stopsStatus.last ? 'end' : 'middle'}">

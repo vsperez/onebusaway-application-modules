@@ -109,7 +109,7 @@ public class ConfigurationServiceClientFileImpl implements
 	public List<Map<String, String>> getItems(String baseObject,
 			String... params) throws Exception {
 		_log.debug("getItems(" + baseObject + ", " + params + ")");
-		System.out.println("getItems");
+	
 		return (List<Map<String, String>>) getConfig().get("config");
 	}
 
@@ -118,7 +118,7 @@ public class ConfigurationServiceClientFileImpl implements
 		List<Map<String, String>> settings = getItems("config", "list");
 		if (settings == null) return null;
 		for (Map<String, String> setting : settings) {
-			System.out.println(setting);
+			
 		  if (component == null) {
 		    if (setting.containsKey("key") && key.equals(setting.get("key"))) {
 		    	

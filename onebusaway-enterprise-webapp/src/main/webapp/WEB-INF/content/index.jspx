@@ -147,6 +147,23 @@
 	dictionary.set('vehicle', "<oba:message key='vehicle'/>");
 	dictionary.set('routes', "<oba:message key='routes'/>");
 	dictionary.set('routes.available', "<oba:message key='routes.available'/>");
+	dictionary.set('did.you.mean',"<oba:message key='did.you.mean'/>");
+	dictionary.set('check.back.shortly',"<oba:message key='check.back.shortly'/>");
+	dictionary.set('bustopsList',"<oba:message key='bustopsList'/>");
+	dictionary.set('search_title',"<oba:message key='search_title'/>");
+	dictionary.set('search_text',"<oba:message key='search_text'/>");
+	dictionary.set('follow.instructions',"<oba:message key='follow.instructions'/>");
+	dictionary.set('direction_title',"<oba:message key='direction_title'/>");
+	dictionary.set('direction_text',"<oba:message key='direction_text'/>");
+	dictionary.set('zoomMap_text',"<oba:message key='zoomMap_text'/>");
+	dictionary.set('disambiguation_text',"<oba:message key='disambiguation_text'/>");
+	dictionary.set('disambiguation_title',"<oba:message key='disambiguation_title'/>");
+	dictionary.set('noresult_text',"<oba:message key='noresult_text'/>");
+	dictionary.set('share_title',"<oba:message key='share_title'/>");
+	dictionary.set('share_text',"<oba:message key='share_text'/>");
+	
+	
+	
 </script>
 
 
@@ -363,6 +380,24 @@
 
 
 </s:else>
+<script type="text/javascript">
+
+
+function getLanLon( myLat,myLon)
+{
+var latlon = null;
+
+if(typeof google != 'undefined' &amp;&amp; google.maps != undefined )
+{
+	latlng = new google.maps.LatLng(myLat,myLon);
+}
+else
+{
+	latlng = new L.LatLng(myLat, myLon);
+}
+}
+
+</script>
 </head>
 <body>
 
@@ -401,7 +436,7 @@
 						<!-- <s:url var="url" namespace="/wiki/Developers" action="Index"/>
 		 			<li id="link_developers"><a href="${url}"><s:property value="getText('link.developers')" /></a></li>
  -->
-						<s:url var="url" namespace="/wiki/Help" action="Index" />
+						<s:url var="url" namespace="/wiki/Help" action="Index"  />
 						<li id="link_help"><a href="${url}"><oba:message
 									key='link.help' /></a></li>
 					</ul>
@@ -464,7 +499,7 @@
 					</h2>
 					<s:url var="url" namespace="/routes" action="index" />
 					<p>
-						<oba:message key='main.cantfindroute.text' />
+						<!--<oba:message key='main.cantfindroute.text' />-->
 						&#160;<a href="${url}"><oba:message key='click.here' /></a>&#160;
 						<oba:message key='see.available.routes' />
 					</p>
@@ -485,9 +520,10 @@
 
 				<!-- Include the Google ad -->
 				<!--<c:import url="includes/ad.jspx" />-->
-
+		
 				<div id="flexSpreader">
 					<!-- jspx -->
+					
 				</div>
 				<div class="container clear">
 					<!-- jspx -->
@@ -527,59 +563,76 @@
 						class="wizard_panel" rel="popover">
 							<div id="inner-col1">
 								<h2>
-									New to
-									<s:property value="getText('main.application.name')" />
-									?
+								<oba:message key="new.to"></oba:message>
+									<s:property value="getText('main.application.name')" />?
 								</h2>
-								<p>Click here for instructions:</p>
-								<p>Just a few easy steps!</p>
+								<p><oba:message key="click.here.for.instructions"/></p>
+								<p><oba:message key="few.steps"/></p>
 							</div>
 					</a></li>
-					<li id="wizard-col2">
-						<p>Also</p>
-						<p>available</p>
-						<p>using:</p>
+					<li id="wizard-col2" class="wizard_panel" >
+					<div style="display: table;"> 
+					<p style="display: table-cell;vertical-algin: middle"> 
+						<oba:message key="also.available"/>
+						</p>
+						</div>
 					</li>
-					<li id="wizard-col3"><s:url var="url" namespace="/m" action="" />
-						<a href="${url}" target="_new">
-							<p>Mobile Web</p> <a rel="popover"><div id="smartphone_img">&amp;&#160;</div></a>
-					</a></li>
+					<li id="wizard-col3">
+					
+					<s:set var="link" value="getText('main.playstore.link')"/>
+					<div id="android_img" onclick="window.open('${link}');">&#160;</div>
+						
+					</li>
+					<li id="wizard-col4">
+						<s:set var="link" value="getText('main.iostore.link')"/>
+						<div id="ios_img" onclick="window.open('${link}');">&#160;</div>
+					
+						
+						<!--	<p>Mobile Web</p> <a rel="popover"><div id="smartphone_img">&#160;</div></a>
+							
+					--></li>
+					<!--  
 					<li id="wizard-col4"><s:url var="url" namespace="/wiki/Help"
 							action="SMSOverview" /> <a href="${url}" target="_new">
-							<p>SMS</p> <a rel="popover"><div id="sms_img">&amp;&#160;</div></a>
+							<p>SMS</p> <a rel="popover"><div id="sms_img">&#160;</div></a>
 					</a></li>
+					-->
 				</ul>
-				<a class="close"><span class="close_txt">Close</span> ×</a>
+				<a class="close"><span class="close_txt"><oba:message key="close"/></span> ×</a>
 			</div>
 			<div id="wizard_didyoumean">
-				<a data-placement="right" class="wizard_panel" rel="popover">&amp;&#160;</a>
-				<a class="close"><span class="close_txt">Close</span> ×</a>
+				<a data-placement="right" class="wizard_panel" rel="popover">&#160;</a>
+				<a class="close"><span class="close_txt"><oba:message key="also.available"/></span> ×</a>
 			</div>
 			<div id="wizard_inuse">
-				<a data-placement="right" class="wizard_panel" rel="popover">&amp;&#160;</a>
-				<span class="text_span">Follow the instructions above . . .</span> <a
-					class="close"><span class="close_txt">Close</span> ×</a>
+				<a data-placement="right" class="wizard_panel" rel="popover">&#160;</a>
+				<span class="text_span"><oba:message key="follow.instructions"/></span> <a
+					class="close"><span class="close_txt"><oba:message key="also.available"/></span> ×</a>
 			</div>
 			<div id="wizard_finaltip">
 				<div>
 					<p>
-						<span style="font-weight: bold;">Tips:</span> <a
-							data-placement="right" class="wizard_panel" rel="popover">&amp;&#160;</a>
-						<s:property value="getText('main.application.name')" />
-						is also available via <a id="wizard_mobile" rel="popover">Mobile
-							Web</a> or <a id="wizard_sms" rel="popover">SMS/Text Message</a>.
+						<span style="font-weight: bold;"><oba:message key="tips"/></span> <a
+							data-placement="right" class="wizard_panel" rel="popover">&#160;</a>
+						<s:property value="getText('main.application.name')" />&#160;
+						<oba:message key="is.also.available"/>&#160;web
+						
+							<!-- or <a id="wizard_sms" rel="popover">SMS/Text Message</a>. -->
 					</p>
-					<p>
+					<!--<p>
 						Remember your Stopcode from the pop-ups or find it on a <a
 							id="tips_code_popup" rel="popover" data-placement="above">bus
 							stop pole box</a>.
-					</p>
+					</p>-->
 					<p id="sharelinks">
-						<a id="wizard_share" rel="popover">Share</a> this link and tell
-						others about
+						<a id="wizard_share" rel="popover"><oba:message key="share"></oba:message></a>&#160;<oba:message key="share.this.link"></oba:message>&#160;
 						<s:property value="getText('main.application.name')" />
 						!
-						<s:set var="link" value="getText('main.agency.twitter.link')" />
+						
+						<s:set var="link" value="getText('main.agency.linkedin.link')" />
+						<a href="${link}" target="_new"><span
+							class="ui-icon ui-icon-linkedin"> &amp;nbsp; </span></a>
+						<!-- <s:set var="link" value="getText('main.agency.twitter.link')" />
 						<a href="${link}" target="_new"><span
 							class="ui-icon ui-icon-twitter"> &amp;nbsp; </span></a>
 						<s:set var="link" value="getText('main.agency.facebook.link')" />
@@ -591,6 +644,7 @@
 						<s:set var="link" value="getText('main.agency.flickr.link')" />
 						<a href="${link}" target="_new"><span
 							class="ui-icon ui-icon-flickr"> &amp;nbsp; </span></a>
+							 -->
 					</p>
 				</div>
 				<a class="close"><span class="close_txt">Close</span> ×</a>
