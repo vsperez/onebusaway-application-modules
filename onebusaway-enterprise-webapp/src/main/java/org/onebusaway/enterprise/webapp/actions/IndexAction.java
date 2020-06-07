@@ -16,11 +16,21 @@
 package org.onebusaway.enterprise.webapp.actions;
 
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.omg.CORBA.Object;
+import org.onebusaway.gtfs.model.AgencyAndId;
+import org.onebusaway.presentation.impl.cities.CityServiceImpl;
 import org.onebusaway.presentation.services.realtime.RealtimeService;
+import org.onebusaway.presentation.services.routes.RouteListService;
 import org.onebusaway.util.services.configuration.ConfigurationService;
+import org.onebusaway.transit_data.model.CityBean;
+import org.onebusaway.transit_data.model.CityRoutesBean;
+import org.onebusaway.transit_data.model.RouteBean;
 import org.onebusaway.transit_data.model.service_alerts.ServiceAlertBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -35,12 +45,48 @@ import com.opensymphony.xwork2.ActionProxy;
 public class IndexAction extends OneBusAwayEnterpriseActionSupport {
 
   private static final long serialVersionUID = 1L;
+  
+  @Autowired
+  CityServiceImpl _cityService;
 
   @Autowired
   private ConfigurationService _configurationService;
   
   @Autowired
   private RealtimeService _realtimeService;
+  
+  
+  @Autowired
+  private RouteListService _routeListService;
+  ObjectMapper mapper=new ObjectMapper();
+  public List<CityRoutesBean> getCityRoutes()
+  {
+	  return _cityService.getCitiesWithRouteList();
+//	  try
+//	  {
+//		  
+//		 Map<String,String> cityMap=new HashMap<String,String>();
+//		 for(CityBean city:_cityService.getAvailableCities())
+//		 {
+//		
+//			 List<AgencyAndId> listaIdRecorridos = _cityService.getCityRouteList(city.getId());
+//			 String list="";
+//			 for(AgencyAndId ids:listaIdRecorridos)
+//			 {
+//				 list+=ids.getId()+";";
+//			 }
+//			 if(!list.isEmpty() && list.length()>2)
+//				 list=list.substring(0,list.length()-2);
+//			 cityMap.put(city.getName(),list);
+//		//  List<RouteBean> routes = _routeListService.getRoutes();
+//		 }
+//	  //return mapper.writeValueAsString(cityMap);
+//	  }
+//	  catch (Exception e) {
+//		e.printStackTrace();
+//		return "";
+//	}
+  }
 
   public String getGoogleMapsClientId() {
     return _configurationService.getConfigurationValueAsString("display.googleMapsClientId", "");    

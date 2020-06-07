@@ -18,7 +18,9 @@ package org.onebusaway.enterprise.webapp.actions.m.routes;
 
 import java.util.List;
 
+import org.onebusaway.transit_data.model.CityRoutesBean;
 import org.onebusaway.transit_data.model.RouteBean;
+import org.onebusaway.presentation.impl.cities.CityServiceImpl;
 import org.onebusaway.presentation.services.routes.RouteListService;
 import org.onebusaway.enterprise.webapp.actions.OneBusAwayEnterpriseActionSupport;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +34,8 @@ public class IndexAction extends OneBusAwayEnterpriseActionSupport {
     private static final long serialVersionUID = 1L;
     @Autowired
     private RouteListService _routeListService;
+    @Autowired
+	private CityServiceImpl _cityService;
 
     public boolean getShowAgencyNames() {
         return _routeListService.getShowAgencyNames();
@@ -43,6 +47,11 @@ public class IndexAction extends OneBusAwayEnterpriseActionSupport {
 
     public List<RouteBean> getRoutes() {
         return _routeListService.getRoutes();
+
+    }
+    public List<CityRoutesBean> getRoutesByCities() {
+    	
+        return _cityService.getCitiesWithRouteList();
 
     }
 }

@@ -18,7 +18,9 @@ package org.onebusaway.enterprise.webapp.actions.routes;
 
 import java.util.List;
 
+import org.onebusaway.transit_data.model.CityRoutesBean;
 import org.onebusaway.transit_data.model.RouteBean;
+import org.onebusaway.presentation.impl.cities.CityServiceImpl;
 import org.onebusaway.presentation.services.routes.RouteListService;
 import org.onebusaway.util.services.configuration.ConfigurationService;
 import org.onebusaway.enterprise.webapp.actions.OneBusAwayEnterpriseActionSupport;
@@ -34,6 +36,8 @@ public class IndexAction extends OneBusAwayEnterpriseActionSupport {
     @Autowired
     private RouteListService _routeListService;
     @Autowired
+    CityServiceImpl _cityService;
+    @Autowired
     private ConfigurationService _configurationService;
     
     public boolean getShowAgencyNames() {
@@ -45,7 +49,19 @@ public class IndexAction extends OneBusAwayEnterpriseActionSupport {
     }
 
     public List<RouteBean> getRoutes() {
+    	System.out.println("getAvaliableCities");
+    	
+    	System.out.println(_cityService.getAvailableCities());
+    	System.out.println(_cityService.getCityRouteList(_cityService.getAvailableCities().get(0).getId()));
         return _routeListService.getRoutes();
+
+    }
+    public List<CityRoutesBean> getRoutesByCities() {
+    	
+    	
+    	//System.out.println(_cityService.getAvailableCities());
+    	//System.out.println(_cityService.getCityRouteList(_cityService.getAvailableCities().get(0).getId()));
+        return _cityService.getCitiesWithRouteList();
 
     }
     

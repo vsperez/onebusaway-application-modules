@@ -25,7 +25,7 @@ OBA.Popups = (function() {
 	var stopBubbleListener = null, stopBubbleTrigger = null;
 
 	function closePopup() {
-		console.log("CLOSE!!!");
+		//console.log("CLOSE!!!");
 		popup = null;
 	}
 
@@ -47,10 +47,13 @@ OBA.Popups = (function() {
 
 	function showPopupWithContentFromRequest(map, marker, url, params, contentFn, routeFilter) {
 		closePopup();
-		console.log("showPopupWithContentFromRequest");
+		console.log("showPopupWithContentFromRequest "+(marker.options.icon.options.iconSize.y / 2));
 		popup = new L.Popup({
-			offset: new L.Point(0, (marker.options.icon.options.iconSize.y / 2)),
+			offset: new L.Point(0, 0),
 			disableAutoPan: false,
+			maxWidth:20000,
+			
+			//className:
 			stopId: marker.stopId // to lock an icon on the map when a popup is open for it
 		});
 		console.log("1");
@@ -85,15 +88,15 @@ OBA.Popups = (function() {
 				}
 
 				// hack to prevent scrollbars in the IEs
-				var content = jQuery("#" + popupContainerId);
-				if(content.height() > 300) {
-					content.css("overflow-y", "scroll")
-					.css("height", "280");
-				}
-				if(content.width() > 500) {
-					content.css("overflow-x", "hidden")
-					.css("width", "480");
-				}
+//				var content = jQuery("#" + popupContainerId);
+//				if(content.height() > 300) {
+//					content.css("overflow-y", "scroll")
+//					.css("height", "280");
+//				}
+//				if(content.width() > 500) {
+//					content.css("overflow-x", "hidden")
+//					.css("width", "480");
+//				}
 			});
 		};
 		refreshFn(true);		

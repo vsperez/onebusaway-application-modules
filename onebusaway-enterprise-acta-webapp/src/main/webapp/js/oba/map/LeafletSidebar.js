@@ -715,6 +715,7 @@ OBA.Sidebar = function() {
 						break;
 				
 					case "RouteResult":
+						console.log(matches);
 						addRoutesToLegend(matches, getValueFor('routes'), null, null);
 
 						routeMap.panToRoute(matches[0].id);
@@ -785,7 +786,14 @@ OBA.Sidebar = function() {
 	}
 	
 	return {
-		
+		search: function(q)
+		{
+			doSearch(q, false);
+		},
+		showRouteList: function(routes)
+		{
+			addRoutesToLegend(routes, getValueFor('routes'), null, null);
+		},
 		showLatLon: function(latLon,zoom)
 		{
 			if(zoom==undefined)

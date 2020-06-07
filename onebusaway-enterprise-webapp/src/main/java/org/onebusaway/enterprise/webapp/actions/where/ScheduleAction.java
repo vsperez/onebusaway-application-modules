@@ -16,6 +16,7 @@
 package org.onebusaway.enterprise.webapp.actions.where;
 
 import java.text.DateFormatSymbols;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -64,15 +65,22 @@ public class ScheduleAction extends ActionSupport {
   private TimeZone _timeZone;
 
   private Boolean _showArrivals = null;
-
+  private  SimpleDateFormat _format = new SimpleDateFormat("yyyy-MM-dd");
   public void setId(String id) {
     _id = id;
   }
 
-  @TypeConversion(converter = "org.onebusaway.enterprise.webapp.actions.schedule.ScheduleByStopDateConverter")
-  public void setDate(Date date) {
-    _date = date;
+ // @TypeConversion(converter = "org.onebusaway.enterprise.webapp.actions.schedule.ScheduleByStopDateConverter")
+  public void setDate(String date) {
+//	  System.out.println("DATE" +date);
+    try {
+		_date = _format.parse(date);
+	} catch (ParseException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
   }
+  
 
   public void setShowArrivals(boolean showArrivals) {
     _showArrivals = showArrivals;
